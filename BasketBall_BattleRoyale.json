@@ -1833,7 +1833,8 @@
                                             }
                                           }
                                         }
-                                      ]
+                                      ],
+                                      "BasketBallBasketTrigger": []
                                     },
                                     "children": []
                                   }
@@ -2483,7 +2484,8 @@
                                             }
                                           }
                                         }
-                                      ]
+                                      ],
+                                      "BasketBallBasketTrigger": []
                                     },
                                     "children": []
                                   }
@@ -3499,7 +3501,8 @@
                                             }
                                           }
                                         }
-                                      ]
+                                      ],
+                                      "BasketBallBasketTrigger": []
                                     },
                                     "children": []
                                   }
@@ -3920,7 +3923,7 @@
                         "children": [
                           {
                             "ƒ.Node": {
-                              "name": "BasketBallKorb_EnemyMegenta",
+                              "name": "BasketBallKorb_EnemyMagenta",
                               "components": {},
                               "children": [
                                 {
@@ -4515,7 +4518,8 @@
                                             }
                                           }
                                         }
-                                      ]
+                                      ],
+                                      "BasketBallBasketTrigger": []
                                     },
                                     "children": []
                                   }

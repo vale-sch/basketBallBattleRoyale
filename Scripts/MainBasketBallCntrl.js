@@ -3,75 +3,6 @@ var basketBallBattleRoyale;
 (function (basketBallBattleRoyale) {
     var fCore = FudgeCore;
     window.addEventListener("load", start);
-    let hitsCounterAvatar = 10;
-    let hitsCounterEnemyBlue = 10;
-    let hitsCounterEnemyRed = 10;
-    let hitsCounterEnemyMagenta = 10;
-    let allCounters = Array(4);
-    let parentToRemove;
-    let isRemoving = false;
-    let removingTime = 0.75;
-    let rgdBdyToRemove;
-    function hndTriggerAvatar(_event) {
-        if (_event.cmpRigidbody.getContainer().name == "BasketBallPrefab") {
-            _event.cmpRigidbody.getContainer().getComponent(basketBallBattleRoyale.BasketBallsController).isInUse = false;
-            // tslint:disable-next-line: no-use-before-declare
-            basketBallBattleRoyale.basketBalls.forEach(basketBall => {
-                if (basketBall.getParent() == _event.cmpRigidbody.getContainer().getParent()) {
-                    parentToRemove = _event.cmpRigidbody.getContainer().getParent();
-                }
-            });
-            rgdBdyToRemove = _event.cmpRigidbody;
-            basketBallBattleRoyale.gameState.hitsAvatar = "Avatar Leben: " + --hitsCounterAvatar;
-            isRemoving = true;
-        }
-    }
-    basketBallBattleRoyale.hndTriggerAvatar = hndTriggerAvatar;
-    function hndTriggerEnemyBlue(_event) {
-        if (_event.cmpRigidbody.getContainer().name == "BasketBallPrefab") {
-            _event.cmpRigidbody.getContainer().getComponent(basketBallBattleRoyale.BasketBallsController).isInUse = false;
-            // tslint:disable-next-line: no-use-before-declare
-            basketBallBattleRoyale.basketBalls.forEach(basketBall => {
-                if (basketBall.getParent() == _event.cmpRigidbody.getContainer().getParent()) {
-                    parentToRemove = _event.cmpRigidbody.getContainer().getParent();
-                }
-            });
-            rgdBdyToRemove = _event.cmpRigidbody;
-            basketBallBattleRoyale.gameState.hitsEnemyBlue = "EnemyBlue Leben: " + --hitsCounterEnemyBlue;
-            isRemoving = true;
-        }
-    }
-    basketBallBattleRoyale.hndTriggerEnemyBlue = hndTriggerEnemyBlue;
-    function hndTriggerEnemyRed(_event) {
-        if (_event.cmpRigidbody.getContainer().name == "BasketBallPrefab") {
-            _event.cmpRigidbody.getContainer().getComponent(basketBallBattleRoyale.BasketBallsController).isInUse = false;
-            // tslint:disable-next-line: no-use-before-declare
-            basketBallBattleRoyale.basketBalls.forEach(basketBall => {
-                if (basketBall.getParent() == _event.cmpRigidbody.getContainer().getParent()) {
-                    parentToRemove = _event.cmpRigidbody.getContainer().getParent();
-                }
-            });
-            rgdBdyToRemove = _event.cmpRigidbody;
-            basketBallBattleRoyale.gameState.hitsEnemyRed = "EnemyRed Leben: " + --hitsCounterEnemyRed;
-            isRemoving = true;
-        }
-    }
-    basketBallBattleRoyale.hndTriggerEnemyRed = hndTriggerEnemyRed;
-    function hndTriggerEnemyMagenta(_event) {
-        if (_event.cmpRigidbody.getContainer().name == "BasketBallPrefab") {
-            _event.cmpRigidbody.getContainer().getComponent(basketBallBattleRoyale.BasketBallsController).isInUse = false;
-            // tslint:disable-next-line: no-use-before-declare
-            basketBallBattleRoyale.basketBalls.forEach(basketBall => {
-                if (basketBall.getParent() == _event.cmpRigidbody.getContainer().getParent()) {
-                    parentToRemove = _event.cmpRigidbody.getContainer().getParent();
-                }
-            });
-            rgdBdyToRemove = _event.cmpRigidbody;
-            basketBallBattleRoyale.gameState.hitsEnemyMagenta = "EnemyMagenta Leben: " + --hitsCounterEnemyMagenta;
-            isRemoving = true;
-        }
-    }
-    basketBallBattleRoyale.hndTriggerEnemyMagenta = hndTriggerEnemyMagenta;
     basketBallBattleRoyale.players = new Array(new fCore.Node(""));
     let cmpMeshFloorTiles = new Array(new fCore.ComponentMesh());
     let floorContainer;
@@ -90,9 +21,8 @@ var basketBallBattleRoyale;
         basketBallBattleRoyale.canvas = document.querySelector("canvas");
         viewport = new fCore.Viewport();
         viewport.initialize("Viewport", basketBallBattleRoyale.bskBallRoot, basketBallBattleRoyale.cmpCamera, basketBallBattleRoyale.canvas);
-        for (let i = 0; i < allCounters.length; i++)
-            //get refrences of important tree hierachy objects
-            staticEnvContainer = basketBallBattleRoyale.bskBallRoot.getChild(0);
+        //get refrences of important tree hierachy objects
+        staticEnvContainer = basketBallBattleRoyale.bskBallRoot.getChild(0);
         floorContainer = staticEnvContainer.getChild(0).getChild(0);
         let response = await fetch("./JSON/Config.json");
         let textResponse = await response.text();
@@ -119,45 +49,12 @@ var basketBallBattleRoyale;
         for (let cmpMeshFloorTile of cmpMeshFloorTiles)
             cmpMeshFloorTile.activate(false);
         basketBallBattleRoyale.Hud.start();
-        setGameState();
         fCore.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
         fCore.Loop.start(fCore.LOOP_MODE.TIME_REAL, 60);
         console.log(basketBallBattleRoyale.bskBallRoot);
     }
-    function setGameState() {
-        basketBallBattleRoyale.gameState.hitsAvatar = "Avatar Leben: " + hitsCounterAvatar;
-        basketBallBattleRoyale.gameState.hitsEnemyBlue = "EnemyBlue Leben: " + hitsCounterEnemyBlue;
-        basketBallBattleRoyale.gameState.hitsEnemyRed = "EnemyRed Leben: " + hitsCounterEnemyRed;
-        basketBallBattleRoyale.gameState.hitsEnemyMagenta = "EnemyMagenta Leben: " + hitsCounterEnemyMagenta;
-    }
     async function update() {
         ƒ.Physics.world.simulate(fCore.Loop.timeFrameReal / 1000);
-        for (let i = 0; i < allCounters.length; i++) {
-            switch (i) {
-                case 0: allCounters[0] = hitsCounterAvatar;
-                case 1: allCounters[1] = hitsCounterEnemyBlue;
-                case 2: allCounters[2] = hitsCounterEnemyRed;
-                case 3: allCounters[3] = hitsCounterEnemyMagenta;
-            }
-            if (allCounters[i] <= 0)
-                switch (i) {
-                    case (0): console.log("Avatar is going to bed");
-                    case (1): console.log("EnemyBlue is going to bed");
-                    case (2): console.log("EnemyRed is going to bed");
-                    case (3): console.log("EnemyMagenta is going to bed");
-                }
-        }
-        //sub functionality of triggers
-        if (isRemoving) {
-            removingTime -= fCore.Loop.timeFrameReal / 1000;
-            if (removingTime <= 0) {
-                basketBallBattleRoyale.basketBalls.splice(basketBallBattleRoyale.basketBalls.indexOf(parentToRemove.getChild(0)), 1);
-                rgdBdyToRemove.getContainer().removeComponent(rgdBdyToRemove);
-                basketBallBattleRoyale.basketBallContainer.getChild(1).removeChild(parentToRemove);
-                isRemoving = false;
-                removingTime = 0.75;
-            }
-        }
         //debug keyboard events
         if (fCore.Keyboard.isPressedOne([fCore.KEYBOARD_CODE.T]))
             fCore.Physics.settings.debugMode =
@@ -210,20 +107,7 @@ var basketBallBattleRoyale;
                         collMeshesOfBasketTrigger[counterTrigger] = meshAndTrigger.getComponent(fCore.ComponentMesh);
                         let staticTrigger = new fCore.ComponentRigidbody(0, fCore.PHYSICS_TYPE.STATIC, fCore.COLLIDER_TYPE.CUBE, fCore.PHYSICS_GROUP.TRIGGER);
                         meshAndTrigger.addComponent(staticTrigger);
-                        switch (counterTrigger) {
-                            case (0):
-                                meshAndTrigger.getComponent(fCore.ComponentRigidbody).addEventListener("TriggerEnteredCollision" /* TRIGGER_ENTER */, hndTriggerAvatar);
-                                break;
-                            case (1):
-                                meshAndTrigger.getComponent(fCore.ComponentRigidbody).addEventListener("TriggerEnteredCollision" /* TRIGGER_ENTER */, hndTriggerEnemyBlue);
-                                break;
-                            case (2):
-                                meshAndTrigger.getComponent(fCore.ComponentRigidbody).addEventListener("TriggerEnteredCollision" /* TRIGGER_ENTER */, hndTriggerEnemyRed);
-                                break;
-                            case (3):
-                                meshAndTrigger.getComponent(fCore.ComponentRigidbody).addEventListener("TriggerEnteredCollision" /* TRIGGER_ENTER */, hndTriggerEnemyMagenta);
-                                break;
-                        }
+                        meshAndTrigger.addComponent(new basketBallBattleRoyale.BasketBallBasketTrigger(meshAndTrigger));
                         counterTrigger++;
                     }
                 }

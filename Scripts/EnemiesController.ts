@@ -1,8 +1,5 @@
 namespace basketBallBattleRoyale {
     import fCore = FudgeCore;
-
-
-    fCore.Project.registerScriptNamespace(basketBallBattleRoyale);
     export class EnemiesController extends fCore.ComponentScript {
 
         private myBsktTrigger: fCore.ComponentMesh;

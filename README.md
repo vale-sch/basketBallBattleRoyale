@@ -4,7 +4,7 @@ Repository for the module "Prototyping interactive media-applications and games"
 [Links-Platzhalter](Link1)
 
 - [Link1](Link1.1)
-- [Link2](Link1.2)
+- [Link2](https://vale-sch.github.io/basketBallBattleRoyale/BasketBall_BattleRoyale.html)
 
 
 ## Checkliste für Leistungsnachweis

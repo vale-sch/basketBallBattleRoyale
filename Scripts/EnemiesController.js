@@ -2,7 +2,6 @@
 var basketBallBattleRoyale;
 (function (basketBallBattleRoyale) {
     var fCore = FudgeCore;
-    fCore.Project.registerScriptNamespace(basketBallBattleRoyale);
     class EnemiesController extends fCore.ComponentScript {
         constructor(_containerEnemy, _rgdBdyEnemy, _containerTriggers) {
             super();
