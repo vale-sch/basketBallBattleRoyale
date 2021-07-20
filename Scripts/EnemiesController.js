@@ -2,12 +2,14 @@
 var basketBallBattleRoyale;
 (function (basketBallBattleRoyale) {
     var fCore = FudgeCore;
+    fCore.Project.registerScriptNamespace(basketBallBattleRoyale);
     class EnemiesController extends fCore.ComponentScript {
         constructor(_containerEnemy, _rgdBdyEnemy, _containerTriggers) {
             super();
+            this.isDead = false;
             this.throwStrength = 10;
             this.idleTime = 1;
-            this.movementSpeed = 1.2;
+            this.speedThreshold = 10;
             this.hasGrabbed = false;
             this.isInGrabbingRange = false;
             this.hasShot = false;
@@ -20,20 +22,34 @@ var basketBallBattleRoyale;
                 });
             };
             this.update = () => {
+                if (!this.hasCheckedEverything)
+                    if (this.isDead) {
+                        if (this.actualChosenBall) {
+                            basketBallBattleRoyale.basketBalls.splice(basketBallBattleRoyale.basketBalls.indexOf(this.actualChosenBall.getParent()), 1);
+                            let rgdBdyToRemove = this.actualChosenBall.getComponent(fCore.ComponentRigidbody);
+                            this.actualChosenBall.removeComponent(rgdBdyToRemove);
+                            basketBallBattleRoyale.basketBallContainer.getChild(1).removeChild(this.actualChosenBall.getParent());
+                            this.resetReferences();
+                        }
+                        this.hasCheckedEverything = true;
+                        return;
+                    }
+                if (this.isDead)
+                    return;
                 if (this.hasShot) {
                     this.idleTime = this.idleTime - fCore.Loop.timeFrameReal / 1000;
+                    this.moveToRandomPoint();
                     if (this.idleTime <= 0) {
                         this.actualChosenBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInFlight = false;
-                        this.actualChosenBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInEnemysTargetAlready = false;
-                        this.actualChosenBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInUse = false;
+                        this.actualChosenBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInEnemysUse = false;
+                        this.actualChosenBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInPlayersUse = false;
                         this.resetReferences();
                         this.hasShot = false;
                     }
-                    this.moveToRandomPoint();
                     return;
                 }
                 if (this.targetedBall) {
-                    if (!this.targetedBall || !this.targetedBall.getComponent(fCore.ComponentRigidbody) || this.targetedBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInUse) {
+                    if (!this.targetedBall || !this.targetedBall.getComponent(fCore.ComponentRigidbody) || this.targetedBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInPlayersUse) {
                         this.resetReferences();
                         return;
                     }
@@ -52,7 +68,7 @@ var basketBallBattleRoyale;
                 let howMuchActiveBalls = 0;
                 basketBallBattleRoyale.basketBalls.forEach(basketBall => {
                     if (basketBall.getComponent(basketBallBattleRoyale.BasketBallsController))
-                        if (!basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInEnemysTargetAlready && !basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInUse)
+                        if (!basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInEnemysUse && !basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInPlayersUse)
                             howMuchActiveBalls++;
                 });
                 if (howMuchActiveBalls == 0)
@@ -61,34 +77,33 @@ var basketBallBattleRoyale;
                 this.allDistances = Array(howMuchActiveBalls);
                 for (let i = 0; i < basketBallBattleRoyale.basketBalls.length; i++) {
                     if (basketBallBattleRoyale.basketBalls[i].getComponent(basketBallBattleRoyale.BasketBallsController))
-                        if (!basketBallBattleRoyale.basketBalls[i].getComponent(basketBallBattleRoyale.BasketBallsController).isInEnemysTargetAlready && !basketBallBattleRoyale.basketBalls[i].getComponent(basketBallBattleRoyale.BasketBallsController).isInUse)
+                        if (!basketBallBattleRoyale.basketBalls[i].getComponent(basketBallBattleRoyale.BasketBallsController).isInEnemysUse && !basketBallBattleRoyale.basketBalls[i].getComponent(basketBallBattleRoyale.BasketBallsController).isInPlayersUse)
                             this.allDistances[i] = Math.floor(fCore.Vector3.DIFFERENCE(this.enemyContainer.mtxWorld.translation, basketBallBattleRoyale.basketBalls[i].mtxWorld.translation).magnitude);
                 }
                 let sortedDistances = this.allDistances.sort();
                 basketBallBattleRoyale.basketBalls.forEach(basketBall => {
                     if (basketBall.getComponent(basketBallBattleRoyale.BasketBallsController)) {
                         if (sortedDistances[0] == Math.floor(fCore.Vector3.DIFFERENCE(this.enemyContainer.mtxWorld.translation, basketBall.mtxWorld.translation).magnitude))
-                            if (!basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInEnemysTargetAlready || !basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInUse || !basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInFlight || !this.targetedBall) {
-                                basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInEnemysTargetAlready = true;
+                            if (!basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInEnemysUse || !basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInPlayersUse || !basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInFlight || !this.targetedBall)
                                 this.targetedBall = basketBall;
-                            }
                             else if (sortedDistances[1] == Math.floor(fCore.Vector3.DIFFERENCE(this.enemyContainer.mtxWorld.translation, basketBall.mtxWorld.translation).magnitude))
-                                if (!basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInEnemysTargetAlready || !basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInUse || !basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInFlight || !this.targetedBall) {
-                                    basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInEnemysTargetAlready = true;
+                                if (!basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInEnemysUse || !basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInPlayersUse || !basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInFlight || !this.targetedBall)
                                     this.targetedBall = basketBall;
-                                }
                                 else if (sortedDistances[2] == Math.floor(fCore.Vector3.DIFFERENCE(this.enemyContainer.mtxWorld.translation, basketBall.mtxWorld.translation).magnitude))
-                                    if (!basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInEnemysTargetAlready || !basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInUse || !basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInFlight || !this.targetedBall) {
-                                        basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInEnemysTargetAlready = true;
+                                    if (!basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInEnemysUse || !basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInPlayersUse || !basketBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInFlight || !this.targetedBall)
                                         this.targetedBall = basketBall;
-                                    }
                     }
                 });
+                if (this.targetedBall)
+                    this.targetedBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInEnemysUse = true;
             };
             this.moveToRandomPoint = () => {
                 this.rgdBdyEnemy.setRotation(new fCore.Vector3(0, (this.enemyContainer.mtxWorld.translation.x - this.randomPointVec.x) - (this.enemyContainer.mtxWorld.translation.z - this.randomPointVec.z) * 10, 0));
-                if (this.rgdBdyEnemy.getVelocity().magnitude < 5)
-                    this.rgdBdyEnemy.addVelocity(new fCore.Vector3((this.randomPointVec.x - this.enemyContainer.mtxWorld.translation.x), 0, (this.randomPointVec.z - this.enemyContainer.mtxWorld.translation.z)));
+                let distanceToRandom = fCore.Vector3.DIFFERENCE(new fCore.Vector3((this.randomPointVec.x - this.enemyContainer.mtxWorld.translation.x), 0, (this.randomPointVec.z - this.enemyContainer.mtxWorld.translation.z)), this.enemyContainer.mtxWorld.translation).magnitude;
+                if (distanceToRandom > 1) {
+                    if (this.rgdBdyEnemy.getVelocity().magnitude < this.speedThreshold)
+                        this.rgdBdyEnemy.addVelocity(new fCore.Vector3((this.randomPointVec.x - this.enemyContainer.mtxWorld.translation.x), 0, (this.randomPointVec.z - this.enemyContainer.mtxWorld.translation.z)));
+                }
                 else
                     this.rgdBdyEnemy.addVelocity(fCore.Vector3.ZERO());
             };
@@ -96,8 +111,8 @@ var basketBallBattleRoyale;
                 if (this.targetedBall.getComponent(fCore.ComponentRigidbody)) {
                     this.distanceBallMag = fCore.Vector3.DIFFERENCE(this.targetedBall.mtxWorld.translation, this.enemyContainer.mtxWorld.translation).magnitude;
                     if (this.distanceBallMag > 2) {
-                        if (this.rgdBdyEnemy.getVelocity().magnitude < 15)
-                            this.rgdBdyEnemy.addVelocity(new fCore.Vector3((this.targetedBall.mtxWorld.translation.x - this.enemyContainer.mtxWorld.translation.x) / (this.distanceBallMag * this.movementSpeed), 0, (this.targetedBall.mtxWorld.translation.z - this.enemyContainer.mtxWorld.translation.z) / (this.distanceBallMag * this.movementSpeed)));
+                        if (this.rgdBdyEnemy.getVelocity().magnitude < this.speedThreshold)
+                            this.rgdBdyEnemy.addVelocity(new fCore.Vector3((this.targetedBall.mtxWorld.translation.x - this.enemyContainer.mtxWorld.translation.x) / this.distanceBallMag, 0, (this.targetedBall.mtxWorld.translation.z - this.enemyContainer.mtxWorld.translation.z) / (this.distanceBallMag)));
                         this.rgdBdyEnemy.setRotation(new fCore.Vector3(0, (this.enemyContainer.mtxWorld.translation.x - this.targetedBall.mtxWorld.translation.x) - (this.enemyContainer.mtxWorld.translation.z - this.targetedBall.mtxWorld.translation.z), 0));
                         if (this.distanceBallMag <= 4) {
                             this.isInGrabbingRange = true;
@@ -116,7 +131,7 @@ var basketBallBattleRoyale;
                 this.rgdBdyEnemy.setRotation(fCore.Vector3.ZERO());
                 let distanceToMiddle = fCore.Vector3.DIFFERENCE(this.enemyContainer.mtxWorld.translation, basketBallBattleRoyale.cylFloor.mtxWorld.translation).magnitude;
                 if (distanceToMiddle > 2.5) {
-                    if (this.rgdBdyEnemy.getVelocity().magnitude < 15)
+                    if (this.rgdBdyEnemy.getVelocity().magnitude < this.speedThreshold)
                         this.rgdBdyEnemy.setVelocity(new fCore.Vector3((basketBallBattleRoyale.cylFloor.mtxWorld.translation.x - this.containerEnemy.mtxWorld.translation.x), 0, (basketBallBattleRoyale.cylFloor.mtxWorld.translation.z - this.containerEnemy.mtxWorld.translation.z)));
                     return;
                 }
@@ -130,14 +145,17 @@ var basketBallBattleRoyale;
                 }
                 if (this.hasGrabbed) {
                     let randomTargetNmb = new fCore.Random().getRangeFloored(0, 4);
-                    this.rndChosenTarget = this.containerTriggers[randomTargetNmb];
-                    if (this.myBsktTrigger == this.rndChosenTarget)
+                    console.log(this.containerTriggers[randomTargetNmb].getContainer().getParent().name);
+                    if (!this.containerTriggers[randomTargetNmb].getContainer().getParent().getChild(0).getChild(0).getComponent(fCore.ComponentRigidbody))
                         return;
+                    if (this.myBsktTrigger == this.containerTriggers[randomTargetNmb])
+                        return;
+                    this.rndChosenTarget = this.containerTriggers[randomTargetNmb];
                     this.rgdBdyEnemy.rotateBody(new fCore.Vector3(0, (this.rndChosenTarget.mtxWorld.translation.x - this.enemyContainer.mtxWorld.translation.x) - (this.rndChosenTarget.mtxWorld.translation.z - this.enemyContainer.mtxWorld.translation.z), 0));
                     let enemyForward = new fCore.Vector3(this.rndChosenTarget.mtxWorld.translation.x - this.enemyContainer.mtxWorld.translation.x, 0, this.rndChosenTarget.mtxWorld.translation.z - this.enemyContainer.mtxWorld.translation.z);
                     enemyForward.transform(this.rndChosenTarget.mtxWorld, false);
                     this.actualChosenBall.getComponent(fCore.ComponentRigidbody).applyImpulseAtPoint(new fCore.Vector3(enemyForward.x * this.throwStrength, 275, enemyForward.z * this.throwStrength), this.enemyContainer.mtxWorld.translation);
-                    this.randomPointVec = new fCore.Vector3(fCore.random.getRangeFloored(-15, 15), 0, fCore.random.getRangeFloored(-15, 15));
+                    this.randomPointVec = new fCore.Vector3(fCore.random.getRangeFloored(-6, 6), 0, fCore.random.getRangeFloored(-6, 6));
                     this.idleTime = 2;
                     this.hasShot = true;
                 }

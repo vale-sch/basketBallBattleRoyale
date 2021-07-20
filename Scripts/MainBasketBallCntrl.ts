@@ -8,22 +8,18 @@ namespace basketBallBattleRoyale {
   export let cmpCamera: fCore.ComponentCamera;
   export let cylFloor: fCore.Node;
   export let canvas: HTMLCanvasElement;
+  export let playersContainer: fCore.Node;
 
   let cmpMeshFloorTiles: fCore.ComponentMesh[] = new Array(new fCore.ComponentMesh());
 
-
   let floorContainer: fCore.Node;
   let staticEnvContainer: fCore.Node;
-  export let playersContainer: fCore.Node;
 
   let collMeshesOfBasketStand: fCore.ComponentMesh[] = new Array(new fCore.ComponentMesh());
   let collMeshesOfBasketTrigger: fCore.ComponentMesh[] = new Array(new fCore.ComponentMesh());
   let rgdBdyEnemies: fCore.ComponentRigidbody[] = new Array(new fCore.ComponentRigidbody());
 
-
-
   let viewport: fCore.Viewport;
-
 
   async function start(_event: Event): Promise<void> {
     //initialisation
@@ -39,21 +35,15 @@ namespace basketBallBattleRoyale {
     canvas = document.querySelector("canvas");
     viewport = new fCore.Viewport();
     viewport.initialize("Viewport", bskBallRoot, cmpCamera, canvas);
-
-
-
+    //initialisation
 
     //get refrences of important tree hierachy objects
     staticEnvContainer = bskBallRoot.getChild(0);
     floorContainer = staticEnvContainer.getChild(0).getChild(0);
 
-
-
     let response: Response = await fetch("./JSON/Config.json");
     let textResponse: string = await response.text();
     console.log(textResponse);
-
-
     //basketBalls
     // tslint:disable-next-line: no-unused-expression
     new BasketBallSpawner();
@@ -63,7 +53,6 @@ namespace basketBallBattleRoyale {
 
     //create static Colliders and dynamic rigidbodies
     createandHandleRigidbodies();
-
 
     //initialize avatar
     let avatarController: AvatarController = new AvatarController(playersContainer, collMeshesOfBasketTrigger, players);
@@ -82,7 +71,6 @@ namespace basketBallBattleRoyale {
     for (let cmpMeshFloorTile of cmpMeshFloorTiles)
       cmpMeshFloorTile.activate(false);
     Hud.start();
-
 
     fCore.Loop.addEventListener(fCore.EVENT.LOOP_FRAME, update);
     fCore.Loop.start(fCore.LOOP_MODE.TIME_REAL, 60);

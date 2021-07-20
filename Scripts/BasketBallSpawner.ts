@@ -10,6 +10,7 @@ namespace basketBallBattleRoyale {
     export class BasketBallSpawner {
 
         private isSpawning: boolean;
+        private ballIterator: number;
         constructor() {
             this.start();
         }
@@ -22,7 +23,7 @@ namespace basketBallBattleRoyale {
         }
 
         private update = (): void => {
-            if (players.length > this.checkBasketBallsAmount() && !this.isSpawning) {
+            if (alivePlayers > this.checkBasketBallsAmount() && !this.isSpawning) {
                 let rndPos: fCore.Vector3 = new fCore.Vector3(new fCore.Random().getRange(-15, 15), new fCore.Random().getRange(30, 60), new fCore.Random().getRange(-15, 15));
                 this.spawnBalls(rndPos);
             }
@@ -38,13 +39,16 @@ namespace basketBallBattleRoyale {
                 fCore.PHYSICS_GROUP.GROUP_2
             );
             dynamicRgdbdy.friction = 1;
-            dynamicRgdbdy.rotationInfluenceFactor = new fCore.Vector3(1, 1, 1);
-
+            if (this.ballIterator % 2 == 0)
+                dynamicRgdbdy.rotationInfluenceFactor = new fCore.Vector3(1, 0, 0);
+            else
+                dynamicRgdbdy.rotationInfluenceFactor = new fCore.Vector3(0, 0, 1);
             basketBallCloneGraph.getChild(0).addComponent(dynamicRgdbdy);
             basketBallContainer.getChild(1).appendChild(basketBallCloneGraph);
 
             dynamicRgdbdy.setPosition(_rndPos);
             this.isSpawning = false;
+            this.ballIterator++;
         }
 
         private checkBasketBallsAmount(): number {

@@ -9,6 +9,7 @@ var basketBallBattleRoyale;
             this.hitsEnemyBlue = "";
             this.hitsEnemyRed = "";
             this.hitsEnemyMagenta = "";
+            this.shootBar = 0;
         }
         // tslint:disable-next-line: no-empty
         reduceMutator(_mutator) {

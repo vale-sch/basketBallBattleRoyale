@@ -1,11 +1,6 @@
  PlayerS:
  Spieler Tod Funktion Implementieren
- rgdyBDy.mtxPivot.lookAt() --> damit rotation machen !
 
- Körbe:
- CompnentSkript für jeden Korb der Event Listener an Trigger hat // evtl in main mit foreach durch und referenzen holen
 
 GUI: 
 Anfangs gui aufsetzen, wenn Spieler stribt/gewinnt anderes gui einblenden
-
-KameraRotation vorher winkel abchecken und erst dann rotation schicken. --> Named Clam!

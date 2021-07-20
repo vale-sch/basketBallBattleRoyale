@@ -6,6 +6,7 @@ namespace basketBallBattleRoyale {
         public hitsEnemyBlue: string = "";
         public hitsEnemyRed: string = "";
         public hitsEnemyMagenta: string = "";
+        public shootBar: number = 0;
         // tslint:disable-next-line: no-empty
         protected reduceMutator(_mutator: FudgeCore.Mutator): void {
         }

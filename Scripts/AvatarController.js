@@ -5,7 +5,23 @@ var basketBallBattleRoyale;
     //Event Systems------------------------------------------------------------
     document.addEventListener("mousedown", onPointerDown);
     document.addEventListener("pointerlockchange", pointerLockChange);
+    document.addEventListener("keypress", handler_Key_Pressed);
+    document.addEventListener("keyup", handler_Key_Released);
     window.addEventListener("mousemove", onMouseMove);
+    let rIsPressed;
+    let rIsReleased;
+    function handler_Key_Pressed(_event) {
+        if (_event.code == FudgeCore.KEYBOARD_CODE.R) {
+            rIsPressed = true;
+            rIsReleased = false;
+        }
+    }
+    function handler_Key_Released(_event) {
+        if (_event.code == FudgeCore.KEYBOARD_CODE.R) {
+            rIsPressed = false;
+            rIsReleased = true;
+        }
+    }
     let isPointerInGame;
     function onPointerDown(_event) {
         if (!isPointerInGame)
@@ -19,38 +35,46 @@ var basketBallBattleRoyale;
     }
     function onMouseMove(_event) {
         if (isPointerInGame) {
-            //roatation for y axis on rgdbdy and mesh
             let rotFriction = 10;
             basketBallBattleRoyale.avatarNode.mtxLocal.rotateY(-_event.movementX / rotFriction);
             basketBallBattleRoyale.avatarNode.getComponent(fCore.ComponentRigidbody).rotateBody(fCore.Vector3.Y(-_event.movementX / rotFriction));
-            //rotation for x axis on cmpCamera
-            let topRotLock = -25;
-            let botRotLock = 30;
-            let rotateBackPower = 0.15;
-            if (basketBallBattleRoyale.cmpCamera.mtxPivot.rotation.x >= topRotLock && basketBallBattleRoyale.cmpCamera.mtxPivot.rotation.x <= botRotLock)
+            if (checkIfMouseMoveIsStillValid(_event.movementY))
                 basketBallBattleRoyale.cmpCamera.mtxPivot.rotateX(_event.movementY / rotFriction);
-            else if (basketBallBattleRoyale.cmpCamera.mtxPivot.rotation.x <= topRotLock)
-                basketBallBattleRoyale.cmpCamera.mtxPivot.rotateX(rotateBackPower);
-            else if (basketBallBattleRoyale.cmpCamera.mtxPivot.rotation.x >= topRotLock)
-                basketBallBattleRoyale.cmpCamera.mtxPivot.rotateX(-rotateBackPower);
+        }
+    }
+    function checkIfMouseMoveIsStillValid(_movementY) {
+        let topRotLock = -10;
+        let botRotLock = 15;
+        if (_movementY < 0) {
+            if (basketBallBattleRoyale.cmpCamera.mtxPivot.rotation.x <= topRotLock)
+                return false;
+            else
+                return true;
+        }
+        else {
+            if (basketBallBattleRoyale.cmpCamera.mtxPivot.rotation.x >= botRotLock)
+                return false;
+            else
+                return true;
         }
     }
     //Event Systems------------------------------------------------------------
     fCore.Project.registerScriptNamespace(basketBallBattleRoyale);
     class AvatarController {
-        constructor(_avatarsContainer, _collMeshesOfBasketTrigger, _players) {
+        constructor(_playersContainer, _collMeshesOfBasketTrigger, _players) {
             this.forwardMovement = 0;
             this.backwardMovement = 0;
             this.movementspeed = 5;
             this.frictionFactor = 8;
             this.throwStrength = 510;
+            this.power = 0;
             this.update = () => {
                 if (this.hasShot) {
                     this.timer -= fCore.Loop.timeFrameReal / 1000;
                     if (this.timer <= 0) {
                         this.hasShot = false;
                         if (this.actualChosenBall) {
-                            this.actualChosenBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInUse = false;
+                            this.actualChosenBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInPlayersUse = false;
                             this.actualChosenBall = undefined;
                         }
                     }
@@ -59,15 +83,15 @@ var basketBallBattleRoyale;
                 this.handleInputAvatar(fCore.Loop.timeFrameReal / 1000);
                 this.isGrabbingBasket();
                 //sub functionality of isGrabbingObjects();
-                if (this.isGrabbed) {
-                    this.targetPlayersName = this.whichTargetToChooseAvatar();
-                    this.actualChosenBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInUse = true;
-                    this.actualChosenBall.getComponent(fCore.ComponentRigidbody).setVelocity(fCore.Vector3.ZERO());
-                    this.actualChosenBall.mtxWorld.translate(this.childAvatarNode.mtxWorld.translation);
-                    this.actualChosenBall.getComponent(fCore.ComponentRigidbody).setPosition(this.childAvatarNode.mtxWorld.translation);
-                }
+                if (this.actualChosenBall)
+                    if (this.isGrabbed && this.actualChosenBall) {
+                        this.targetPlayersName = this.whichTargetToChooseAvatar();
+                        this.actualChosenBall.getComponent(fCore.ComponentRigidbody).setVelocity(fCore.Vector3.ZERO());
+                        this.actualChosenBall.mtxWorld.translate(this.childAvatarNode.mtxWorld.translation);
+                        this.actualChosenBall.getComponent(fCore.ComponentRigidbody).setPosition(this.childAvatarNode.mtxWorld.translation);
+                    }
             };
-            this.avatarsContainer = _avatarsContainer;
+            this.playersContainer = _playersContainer;
             this.collMeshesOfBasketTrigger = _collMeshesOfBasketTrigger;
             this.players = _players;
         }
@@ -88,8 +112,8 @@ var basketBallBattleRoyale;
             this.childAvatarNode.addComponent(new fCore.ComponentTransform());
             this.childAvatarNode.mtxLocal.translate(new fCore.Vector3(0, 1, 4.75));
             basketBallBattleRoyale.avatarNode.appendChild(this.childAvatarNode);
-            basketBallBattleRoyale.avatarNode.addComponent(this.cmpAvatar);
             basketBallBattleRoyale.avatarNode.addComponent(basketBallBattleRoyale.cmpCamera);
+            basketBallBattleRoyale.avatarNode.addComponent(this.cmpAvatar);
             this.players[0].appendChild(basketBallBattleRoyale.avatarNode);
         }
         handleInputAvatar(_deltaTime) {
@@ -132,24 +156,31 @@ var basketBallBattleRoyale;
                             this.actualChosenBall = basketBall;
                         }
                     });
-                    if (this.actualChosenBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInUse)
+                    if (!this.actualChosenBall)
                         return;
                     if (this.nearestDistance > throwThreshold)
                         return;
                     this.actualChosenBall.getComponent(fCore.ComponentRigidbody).setVelocity(fCore.Vector3.ZERO());
-                    this.actualChosenBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInUse = true;
+                    this.actualChosenBall.getComponent(basketBallBattleRoyale.BasketBallsController).isInPlayersUse = true;
                     this.isGrabbed = true;
                 }
                 // which target was chosen from raycast-info
-                if (fCore.Keyboard.isPressedOne([fCore.KEYBOARD_CODE.R]) && this.isGrabbed == true) {
-                    this.avatarsContainer.getChildren().forEach(player => {
-                        if (player.getChild(0).name == this.targetPlayersName)
-                            this.collMeshesOfBasketTrigger.forEach(trigger => {
-                                if (player.getChild(0).getChild(1) == trigger.getContainer())
-                                    this.actualTarget = trigger;
-                            });
-                        else
-                            return;
+                if (rIsPressed && this.isGrabbed == true) {
+                    if (basketBallBattleRoyale.gameState.shootBar <= 450)
+                        basketBallBattleRoyale.gameState.shootBar += 6;
+                }
+                if (rIsReleased && this.isGrabbed == true) {
+                    this.power = basketBallBattleRoyale.gameState.shootBar;
+                    basketBallBattleRoyale.gameState.shootBar = 0;
+                    this.playersContainer.getChildren().forEach(player => {
+                        if (player.getChild(0))
+                            if (player.getChild(0).name == this.targetPlayersName)
+                                this.collMeshesOfBasketTrigger.forEach(trigger => {
+                                    if (player.getChild(0).getChild(1) == trigger.getContainer())
+                                        this.actualTarget = trigger;
+                                });
+                            else
+                                return;
                     });
                     //check distance to basket
                     if (!this.actualTarget)
@@ -158,6 +189,8 @@ var basketBallBattleRoyale;
                     let distanceMag = distance.magnitude;
                     if (distanceMag < throwMinDistance)
                         return;
+                    rIsPressed = false;
+                    rIsReleased = false;
                     this.shootCalculation(distanceMag);
                 }
             }
@@ -175,7 +208,7 @@ var basketBallBattleRoyale;
                     meshContainer.getChildren().forEach(childMesh => {
                         childMesh.getComponent(fCore.ComponentMaterial).clrPrimary.a = 1.5;
                     });
-                    if (this.oldRayHit)
+                    if (this.oldRayHit && this.oldRayHit.rigidbodyComponent.getContainer())
                         if (this.oldRayHit.rigidbodyComponent != rayHit.rigidbodyComponent) {
                             let oldMesh = this.oldRayHit.rigidbodyComponent.getContainer().getParent();
                             oldMesh.getComponent(fCore.ComponentMaterial).clrPrimary.a = 0.5;
@@ -184,7 +217,10 @@ var basketBallBattleRoyale;
                             });
                         }
                     this.oldRayHit = rayHit;
-                    return rayHit.rigidbodyComponent.getContainer().getParent().getParent().getParent().name;
+                    if (rayHit.rigidbodyComponent.getContainer().getParent().getParent().getParent())
+                        return rayHit.rigidbodyComponent.getContainer().getParent().getParent().getParent().name;
+                    else
+                        return "No Target in focus";
                 }
                 else
                     return "No Target in focus";
@@ -201,36 +237,58 @@ var basketBallBattleRoyale;
             playerForward = fCore.Vector3.Z();
             playerForward.transform(basketBallBattleRoyale.avatarNode.mtxWorld, false);
             //diffrent powers for diffrent distances
+            console.log(this.power);
             console.log(_distanceMag);
-            if (_distanceMag > 40)
-                this.actualChosenBall.getComponent(fCore.ComponentRigidbody).applyImpulseAtPoint(new fCore.Vector3(playerForward.x * this.throwStrength, _distanceMag * 8.25, playerForward.z * this.throwStrength), basketBallBattleRoyale.avatarNode.mtxWorld.translation);
-            else if (_distanceMag > 30 && _distanceMag < 40)
-                this.actualChosenBall.getComponent(fCore.ComponentRigidbody).applyImpulseAtPoint(new fCore.Vector3(playerForward.x * this.throwStrength * 0.825, _distanceMag * 10, playerForward.z * this.throwStrength * 0.825), basketBallBattleRoyale.avatarNode.mtxWorld.translation);
-            else if (_distanceMag > 20 && _distanceMag < 30)
-                this.actualChosenBall.getComponent(fCore.ComponentRigidbody).applyImpulseAtPoint(new fCore.Vector3(playerForward.x * this.throwStrength * 0.70, _distanceMag * 12, playerForward.z * this.throwStrength * 0.70), basketBallBattleRoyale.avatarNode.mtxWorld.translation);
-            else if (_distanceMag >= 12 && _distanceMag < 20)
-                this.actualChosenBall.getComponent(fCore.ComponentRigidbody).applyImpulseAtPoint(new fCore.Vector3(playerForward.x * this.throwStrength * 0.625, _distanceMag * 18, playerForward.z * this.throwStrength * 0.625), basketBallBattleRoyale.avatarNode.mtxWorld.translation);
-            console.log(Math.floor(_distanceMag));
-            switch (Math.floor(_distanceMag)) {
-                case 11:
-                    this.actualChosenBall.getComponent(fCore.ComponentRigidbody).applyImpulseAtPoint(new fCore.Vector3(playerForward.x * this.throwStrength * 0.575, _distanceMag * 20, playerForward.z * this.throwStrength * 0.575), basketBallBattleRoyale.avatarNode.mtxWorld.translation);
-                    break;
-                case 10:
-                    this.actualChosenBall.getComponent(fCore.ComponentRigidbody).applyImpulseAtPoint(new fCore.Vector3(playerForward.x * this.throwStrength * 0.55, _distanceMag * 22, playerForward.z * this.throwStrength * 0.55), basketBallBattleRoyale.avatarNode.mtxWorld.translation);
-                    break;
-                case 9:
-                    this.actualChosenBall.getComponent(fCore.ComponentRigidbody).applyImpulseAtPoint(new fCore.Vector3(playerForward.x * this.throwStrength * 0.50, _distanceMag * 24, playerForward.z * this.throwStrength * 0.50), basketBallBattleRoyale.avatarNode.mtxWorld.translation);
-                    break;
-                case 8:
-                    this.actualChosenBall.getComponent(fCore.ComponentRigidbody).applyImpulseAtPoint(new fCore.Vector3(playerForward.x * this.throwStrength * 0.475, _distanceMag * 27, playerForward.z * this.throwStrength * 0.475), basketBallBattleRoyale.avatarNode.mtxWorld.translation);
-                    break;
-                case 7:
-                    this.actualChosenBall.getComponent(fCore.ComponentRigidbody).applyImpulseAtPoint(new fCore.Vector3(playerForward.x * this.throwStrength * 0.425, _distanceMag * 32, playerForward.z * this.throwStrength * 0.425), basketBallBattleRoyale.avatarNode.mtxWorld.translation);
-                    break;
-                case 6:
-                    this.actualChosenBall.getComponent(fCore.ComponentRigidbody).applyImpulseAtPoint(new fCore.Vector3(playerForward.x * this.throwStrength * 0.4, _distanceMag * 39, playerForward.z * this.throwStrength * 0.4), basketBallBattleRoyale.avatarNode.mtxWorld.translation);
-                    break;
-            }
+            this.actualChosenBall.getComponent(fCore.ComponentRigidbody).applyImpulseAtPoint(new fCore.Vector3(playerForward.x * this.throwStrength, this.power, playerForward.z * this.throwStrength), basketBallBattleRoyale.avatarNode.mtxWorld.translation);
+            // if (_distanceMag > 40)
+            //     this.actualChosenBall.getComponent(fCore.ComponentRigidbody).applyImpulseAtPoint(
+            //         new fCore.Vector3(playerForward.x * this.throwStrength, _distanceMag * this.power / 2.5, playerForward.z * this.throwStrength),
+            //         avatarNode.mtxWorld.translation);
+            // else if (_distanceMag > 30 && _distanceMag < 40)
+            //     this.actualChosenBall.getComponent(fCore.ComponentRigidbody).applyImpulseAtPoint(
+            //         new fCore.Vector3(playerForward.x * this.throwStrength * 0.825, _distanceMag * this.power / 2.25, playerForward.z * this.throwStrength * 0.825),
+            //         avatarNode.mtxWorld.translation);
+            // else if (_distanceMag > 20 && _distanceMag < 30)
+            //     this.actualChosenBall.getComponent(fCore.ComponentRigidbody).applyImpulseAtPoint(
+            //         new fCore.Vector3(playerForward.x * this.throwStrength * 0.70, _distanceMag * this.power / 2, playerForward.z * this.throwStrength * 0.70),
+            //         avatarNode.mtxWorld.translation);
+            // else if (_distanceMag >= 12 && _distanceMag < 20)
+            //     this.actualChosenBall.getComponent(fCore.ComponentRigidbody).applyImpulseAtPoint(
+            //         new fCore.Vector3(playerForward.x * this.throwStrength * 0.625, _distanceMag * this.power / 1.5, playerForward.z * this.throwStrength * 0.625),
+            //         avatarNode.mtxWorld.translation);
+            // switch (Math.floor(_distanceMag)) {
+            //     case 11:
+            //         this.actualChosenBall.getComponent(fCore.ComponentRigidbody).applyImpulseAtPoint(
+            //             new fCore.Vector3(playerForward.x * this.throwStrength * 0.575, _distanceMag * this.power * 2, playerForward.z * this.throwStrength * 0.575),
+            //             avatarNode.mtxWorld.translation);
+            //         break;
+            //     case 10:
+            //         this.actualChosenBall.getComponent(fCore.ComponentRigidbody).applyImpulseAtPoint(
+            //             new fCore.Vector3(playerForward.x * this.throwStrength * 0.55, _distanceMag * this.power * 3, playerForward.z * this.throwStrength * 0.55),
+            //             avatarNode.mtxWorld.translation);
+            //         break;
+            //     case 9:
+            //         this.actualChosenBall.getComponent(fCore.ComponentRigidbody).applyImpulseAtPoint(
+            //             new fCore.Vector3(playerForward.x * this.throwStrength * 0.50, _distanceMag * this.power * 4, playerForward.z * this.throwStrength * 0.50),
+            //             avatarNode.mtxWorld.translation);
+            //         break;
+            //     case 8:
+            //         this.actualChosenBall.getComponent(fCore.ComponentRigidbody).applyImpulseAtPoint(
+            //             new fCore.Vector3(playerForward.x * this.throwStrength * 0.475, _distanceMag * this.power * 5, playerForward.z * this.throwStrength * 0.475),
+            //             avatarNode.mtxWorld.translation);
+            //         break;
+            //     case 7:
+            //         this.actualChosenBall.getComponent(fCore.ComponentRigidbody).applyImpulseAtPoint(
+            //             new fCore.Vector3(playerForward.x * this.throwStrength * 0.425, _distanceMag * this.power * 8, playerForward.z * this.throwStrength * 0.425),
+            //             avatarNode.mtxWorld.translation);
+            //         break;
+            //     case 6:
+            //         this.actualChosenBall.getComponent(fCore.ComponentRigidbody).applyImpulseAtPoint(
+            //             new fCore.Vector3(playerForward.x * this.throwStrength * 0.4, _distanceMag * this.power * 10, playerForward.z * this.throwStrength * 0.4),
+            //             avatarNode.mtxWorld.translation);
+            //         break;
+            // }
+            this.actualChosenBall.getComponent(fCore.ComponentRigidbody).setRotation(fCore.Vector3.ZERO());
             this.isGrabbed = false;
             this.nearestDistance = undefined;
             this.hasShot = true;

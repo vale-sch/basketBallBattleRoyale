@@ -21,6 +21,7 @@ var basketBallBattleRoyale;
         basketBallBattleRoyale.canvas = document.querySelector("canvas");
         viewport = new fCore.Viewport();
         viewport.initialize("Viewport", basketBallBattleRoyale.bskBallRoot, basketBallBattleRoyale.cmpCamera, basketBallBattleRoyale.canvas);
+        //initialisation
         //get refrences of important tree hierachy objects
         staticEnvContainer = basketBallBattleRoyale.bskBallRoot.getChild(0);
         floorContainer = staticEnvContainer.getChild(0).getChild(0);
