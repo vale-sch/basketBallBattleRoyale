@@ -2,7 +2,6 @@
 var basketBallBattleRoyale;
 (function (basketBallBattleRoyale) {
     var fCore = FudgeCore;
-    window.addEventListener("load", start);
     basketBallBattleRoyale.players = new Array(new fCore.Node(""));
     let cmpMeshFloorTiles = new Array(new fCore.ComponentMesh());
     let floorContainer;
@@ -11,7 +10,7 @@ var basketBallBattleRoyale;
     let collMeshesOfBasketTrigger = new Array(new fCore.ComponentMesh());
     let rgdBdyEnemies = new Array(new fCore.ComponentRigidbody());
     let viewport;
-    async function start(_event) {
+    async function init() {
         //initialisation
         await fCore.Project.loadResourcesFromHTML();
         basketBallBattleRoyale.bskBallRoot = (fCore.Project.resources["Graph|2021-06-02T10:15:15.171Z|84209"]);
@@ -25,9 +24,6 @@ var basketBallBattleRoyale;
         //get refrences of important tree hierachy objects
         staticEnvContainer = basketBallBattleRoyale.bskBallRoot.getChild(0);
         floorContainer = staticEnvContainer.getChild(0).getChild(0);
-        let response = await fetch("./JSON/Config.json");
-        let textResponse = await response.text();
-        console.log(textResponse);
         //basketBalls
         // tslint:disable-next-line: no-unused-expression
         new basketBallBattleRoyale.BasketBallSpawner();
@@ -37,7 +33,7 @@ var basketBallBattleRoyale;
         //create static Colliders and dynamic rigidbodies
         createandHandleRigidbodies();
         //initialize avatar
-        let avatarController = new basketBallBattleRoyale.AvatarController(basketBallBattleRoyale.playersContainer, collMeshesOfBasketTrigger, basketBallBattleRoyale.players);
+        let avatarController = new basketBallBattleRoyale.AvatarController(basketBallBattleRoyale.players);
         avatarController.start();
         fCore.Physics.adjustTransforms(basketBallBattleRoyale.bskBallRoot, true);
         //deactivate pre build meshes from editor, only colliders were needed
@@ -54,6 +50,7 @@ var basketBallBattleRoyale;
         fCore.Loop.start(fCore.LOOP_MODE.TIME_REAL, 60);
         console.log(basketBallBattleRoyale.bskBallRoot);
     }
+    basketBallBattleRoyale.init = init;
     async function update() {
         ƒ.Physics.world.simulate(fCore.Loop.timeFrameReal / 1000);
         //debug keyboard events
@@ -70,6 +67,9 @@ var basketBallBattleRoyale;
     function createandHandleRigidbodies() {
         //floorTiles
         let counterFloorTiles = 0;
+        let staticRgdbdyTrigger = new fCore.ComponentRigidbody(0, fCore.PHYSICS_TYPE.STATIC, fCore.COLLIDER_TYPE.CYLINDER, fCore.PHYSICS_GROUP.TRIGGER);
+        staticEnvContainer.getChild(1).getChild(0).addComponent(staticRgdbdyTrigger);
+        staticEnvContainer.getChild(1).getChild(0).addComponent(new basketBallBattleRoyale.CheckOfOutRangeBalls(staticEnvContainer.getChild(1).getChild(0)));
         for (let cylinderFloorAndWallColl of floorContainer.getChildren()) {
             if (counterFloorTiles == 0) {
                 let staticRgdbdy = new fCore.ComponentRigidbody(0, fCore.PHYSICS_TYPE.STATIC, fCore.COLLIDER_TYPE.CYLINDER, fCore.PHYSICS_GROUP.DEFAULT);

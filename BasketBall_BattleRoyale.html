@@ -17,18 +17,22 @@
     </script>
 
 
+    <script type="text/javascript" src="./Scripts/BasketBallMenu.js">
+    </script>
     <script type="text/javascript" src="./Scripts/MainBasketBallCntrl.js">
     </script>
     <script type="text/javascript" src="./Scripts/BasketBallSpawner.js">
     </script>
-    <script type="text/javascript" src="./Scripts/EnemiesController.js" editor="true">
+    <script type="text/javascript" src="./Scripts/CheckOfOutRangeBalls.js">
+    </script>
+    <script type="text/javascript" src="./Scripts/EnemiesController.js">
     </script>
 
-    <script type=" text/javascript" src="./Scripts/BasketBallsController.js" editor="true">
+    <script type=" text/javascript" src="./Scripts/BasketBallsController.js">
     </script>
-    <script type="text/javascript" src="./Scripts/BasketBallBasketTrigger.js" editor="true">
+    <script type="text/javascript" src="./Scripts/BasketBallBasketTrigger.js">
     </script>
-    <script type="text/javascript" src="./Scripts/AvatarController.js" editor="true">
+    <script type="text/javascript" src="./Scripts/AvatarController.js">
 
     </script>
     <script type="text/javascript" src="./Scripts/Hud.js">
@@ -70,14 +74,52 @@
     </canvas>
 
     <div>
-        <input class="hits" type="text" key="hitsAvatar" style="color: green;" disabled />
-        <input class="hits" type="text" key="hitsEnemyBlue" style="color: blue;" disabled />
-        <input class="hits" type="text" key="hitsEnemyRed" style="color: red;" disabled />
-        <input class="hits" type="text" key="hitsEnemyMagenta" style="color: magenta;" disabled />
-        <progress id="shootBar" type="progress" key="shootBar" value="0" max="450">"shootBar"</progress>
+        <input type="text" key="hitsAvatar" style="color: green;" disabled />
+        <input type="text" key="hitsEnemyBlue" style="color: blue;" disabled />
+        <input type="text" key="hitsEnemyRed" style="color: red;" disabled />
+        <input type="text" key="hitsEnemyMagenta" style="color: magenta;" disabled />
+        <div id="shootBar" hidden="true">
+            <p type="text">⚡</p>
+            <progress key="shootBar" value="0" min="0" max="12"></progress>
+        </div>
+
+        <div id="menu">
+            <div class="btn-group">
+                <h1
+                    style="color: whitesmoke; font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; font-size: 50px;">
+                    welcome to basketball battleroyale</h1>
+                <button id="playButton" class="button" type="button">
+                    <h2>PLAY</h2>
+                </button><br>
+                <button id="optionsButton" class="button" type="button">
+                    <h2>OPTIONS</h2>
+                </button>
+            </div>
+        </div>
+
+        <div id="loose" hidden="true">
+            <div class="btn-group">
+                <h1
+                    style="color: whitesmoke; font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; font-size: 50px;">
+                    you lost all your lifes</h1>
+                <button id="retryButton" class="button" type="button">
+                    <h2>RETRY</h2>
+                </button>
+            </div>
+        </div>
+
+        <div id="win" hidden="true">
+            <div class="btn-group">
+                <h1
+                    style="color: whitesmoke; font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; font-size: 50px;">
+                    you won this round, congratulations!</h1>
+                <button id="nextLevel" class="button" type="button">
+                    <h2>HARDER VERSION</h2>
+                </button>
+            </div>
+        </div>
 
     </div>
-    <div> </div>
 </body>
 
 </html>

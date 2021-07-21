@@ -1,3 +1,5 @@
 {
-    "speed": 200
+    "_enemySpeed": 1,
+    "_playerSpeed": 1,
+    "_diifculty": 1
 }

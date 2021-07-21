@@ -1200,7 +1200,63 @@
                 "ƒ.Node": {
                   "name": "UnreachableObjects",
                   "components": {},
-                  "children": []
+                  "children": [
+                    {
+                      "ƒ.Node": {
+                        "name": "CheckIfBallIsOutside",
+                        "components": {
+                          "ComponentMesh": [
+                            {
+                              "ƒ.ComponentMesh": {
+                                "idMesh": "MeshRotation|2021-06-08T15:26:43.475Z|70891",
+                                "pivot": {
+                                  "translation": "[0, -6, 0]",
+                                  "rotation": "[0, 0, 0]",
+                                  "scaling": "[250, 2, 250]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ],
+                          "ComponentMaterial": [
+                            {
+                              "ƒ.ComponentMaterial": {
+                                "sortForAlpha": false,
+                                "clrPrimary": "[1, 1, 1, 1]",
+                                "clrSecondary": "[1, 1, 1, 1]",
+                                "pivot": {
+                                  "translation": "[0, 0]",
+                                  "rotation": 0,
+                                  "scaling": "[1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                },
+                                "idMaterial": "Material|2021-07-21T09:22:52.083Z|82579"
+                              }
+                            }
+                          ],
+                          "ComponentTransform": [
+                            {
+                              "ƒ.ComponentTransform": {
+                                "local": {
+                                  "translation": "[0, 0, 0]",
+                                  "rotation": "[0, 0, 0]",
+                                  "scaling": "[1, 1, 1]"
+                                },
+                                "Component": {
+                                  "active": true
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "children": []
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -1833,8 +1889,7 @@
                                             }
                                           }
                                         }
-                                      ],
-                                      "BasketBallBasketTrigger": []
+                                      ]
                                     },
                                     "children": []
                                   }
@@ -2484,8 +2539,7 @@
                                             }
                                           }
                                         }
-                                      ],
-                                      "BasketBallBasketTrigger": []
+                                      ]
                                     },
                                     "children": []
                                   }
@@ -3501,8 +3555,7 @@
                                             }
                                           }
                                         }
-                                      ],
-                                      "BasketBallBasketTrigger": []
+                                      ]
                                     },
                                     "children": []
                                   }
@@ -4518,8 +4571,7 @@
                                             }
                                           }
                                         }
-                                      ],
-                                      "BasketBallBasketTrigger": []
+                                      ]
                                     },
                                     "children": []
                                   }
@@ -5207,10 +5259,7 @@
               "BasketBallsController": [
                 {
                   "basketBallBattleRoyale.BasketBallsController": {
-                    "active": true,
-                    "isInUse": false,
-                    "isInEnemysTargetAlready": false,
-                    "isInFlight": false
+                    "active": true
                   }
                 }
               ]
@@ -5221,6 +5270,57 @@
       ],
       "idResource": "Graph|2021-06-10T09:58:39.176Z|64274",
       "type": "Graph"
+    }
+  },
+  "TextureImage|2021-07-21T09:22:46.786Z|48536": {
+    "ƒ.TextureImage": {
+      "url": "Textures\\TexturesCom_WoodBamboo0045_4_seamless_S.jpg",
+      "idResource": "TextureImage|2021-07-21T09:22:46.786Z|48536",
+      "name": "Textures\\TexturesCom_Ice0053_1_seamless_S.jpg",
+      "type": "TextureImage"
+    }
+  },
+  "Material|2021-07-21T09:22:52.083Z|82579": {
+    "ƒ.Material": {
+      "name": "NewMaterial",
+      "idResource": "Material|2021-07-21T09:22:52.083Z|82579",
+      "shader": "ShaderTexture",
+      "coat": {
+        "ƒ.CoatTextured": {
+          "name": "Coat",
+          "color": "[1, 0, 0, 0.73]",
+          "idTexture": "TextureImage|2021-07-21T09:47:37.384Z|38330"
+        }
+      }
+    }
+  },
+  "Material|2021-07-21T09:41:55.216Z|02733": {
+    "ƒ.Material": {
+      "name": "floor",
+      "idResource": "Material|2021-07-21T09:41:55.216Z|02733",
+      "shader": "ShaderTexture",
+      "coat": {
+        "ƒ.CoatTextured": {
+          "name": "Coat",
+          "color": "[1, 1, 1, 1]"
+        }
+      }
+    }
+  },
+  "TextureImage|2021-07-21T09:42:20.170Z|48908": {
+    "ƒ.TextureImage": {
+      "url": "Textures\\TexturesCom_WoodBamboo0045_4_seamless_S.jpg",
+      "idResource": "TextureImage|2021-07-21T09:42:20.170Z|48908",
+      "name": "Textures\\TexturesCom_WoodBamboo0045_4_seamless_S.jpg",
+      "type": "TextureImage"
+    }
+  },
+  "TextureImage|2021-07-21T09:47:37.384Z|38330": {
+    "ƒ.TextureImage": {
+      "url": "Textures\\TexturesCom_Ice0053_1_seamless_S.jpg",
+      "idResource": "TextureImage|2021-07-21T09:47:37.384Z|38330",
+      "name": "Textures\\TexturesCom_Ice0053_1_seamless_S.jpg",
+      "type": "TextureImage"
     }
   }
 }

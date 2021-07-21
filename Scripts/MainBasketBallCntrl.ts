@@ -1,7 +1,6 @@
 namespace basketBallBattleRoyale {
 
   import fCore = FudgeCore;
-  window.addEventListener("load", start);
 
   export let players: fCore.Node[] = new Array(new fCore.Node(""));
   export let avatarNode: fCore.Node;
@@ -21,7 +20,7 @@ namespace basketBallBattleRoyale {
 
   let viewport: fCore.Viewport;
 
-  async function start(_event: Event): Promise<void> {
+  export async function init(): Promise<void> {
     //initialisation
     await fCore.Project.loadResourcesFromHTML();
 
@@ -41,9 +40,7 @@ namespace basketBallBattleRoyale {
     staticEnvContainer = bskBallRoot.getChild(0);
     floorContainer = staticEnvContainer.getChild(0).getChild(0);
 
-    let response: Response = await fetch("./JSON/Config.json");
-    let textResponse: string = await response.text();
-    console.log(textResponse);
+
     //basketBalls
     // tslint:disable-next-line: no-unused-expression
     new BasketBallSpawner();
@@ -55,7 +52,7 @@ namespace basketBallBattleRoyale {
     createandHandleRigidbodies();
 
     //initialize avatar
-    let avatarController: AvatarController = new AvatarController(playersContainer, collMeshesOfBasketTrigger, players);
+    let avatarController: AvatarController = new AvatarController(players);
 
     avatarController.start();
     fCore.Physics.adjustTransforms(bskBallRoot, true);
@@ -99,6 +96,14 @@ namespace basketBallBattleRoyale {
   function createandHandleRigidbodies(): void {
     //floorTiles
     let counterFloorTiles: number = 0;
+    let staticRgdbdyTrigger: fCore.ComponentRigidbody = new fCore.ComponentRigidbody(
+      0,
+      fCore.PHYSICS_TYPE.STATIC,
+      fCore.COLLIDER_TYPE.CYLINDER,
+      fCore.PHYSICS_GROUP.TRIGGER
+    );
+    staticEnvContainer.getChild(1).getChild(0).addComponent(staticRgdbdyTrigger);
+    staticEnvContainer.getChild(1).getChild(0).addComponent(new CheckOfOutRangeBalls(staticEnvContainer.getChild(1).getChild(0)));
     for (let cylinderFloorAndWallColl of floorContainer.getChildren()) {
       if (counterFloorTiles == 0) {
         let staticRgdbdy: fCore.ComponentRigidbody = new fCore.ComponentRigidbody(

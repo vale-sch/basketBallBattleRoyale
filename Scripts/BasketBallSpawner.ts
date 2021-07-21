@@ -38,11 +38,11 @@ namespace basketBallBattleRoyale {
                 fCore.COLLIDER_TYPE.SPHERE,
                 fCore.PHYSICS_GROUP.GROUP_2
             );
-            dynamicRgdbdy.friction = 1;
+            dynamicRgdbdy.friction = 0.1;
             if (this.ballIterator % 2 == 0)
-                dynamicRgdbdy.rotationInfluenceFactor = new fCore.Vector3(1, 0, 0);
+                dynamicRgdbdy.rotationInfluenceFactor = new fCore.Vector3(0.01, 0.01, 0.01);
             else
-                dynamicRgdbdy.rotationInfluenceFactor = new fCore.Vector3(0, 0, 1);
+                dynamicRgdbdy.rotationInfluenceFactor = new fCore.Vector3(-0.01, -0.01, -0.01);
             basketBallCloneGraph.getChild(0).addComponent(dynamicRgdbdy);
             basketBallContainer.getChild(1).appendChild(basketBallCloneGraph);
 

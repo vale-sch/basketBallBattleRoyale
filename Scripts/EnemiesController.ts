@@ -14,8 +14,8 @@ namespace basketBallBattleRoyale {
 
         private actualChosenBall: fCore.Node;
         private targetedBall: fCore.Node;
-        private idleTime: number = 1;
-        private speedThreshold: number = 10;
+        private idleTime: number = 1.5;
+        private speedThreshold: number = 12;
         private rndChosenTarget: fCore.ComponentMesh;
         private hasGrabbed: boolean = false;
         private isInGrabbingRange: boolean = false;
@@ -51,19 +51,17 @@ namespace basketBallBattleRoyale {
         }
 
         private update = (): void => {
-            if (!this.hasCheckedEverything)
-                if (this.isDead) {
-                    if (this.actualChosenBall) {
-                        basketBalls.splice(basketBalls.indexOf(this.actualChosenBall.getParent()), 1);
-                        let rgdBdyToRemove: fCore.ComponentRigidbody = this.actualChosenBall.getComponent(fCore.ComponentRigidbody);
-                        this.actualChosenBall.removeComponent(rgdBdyToRemove);
-                        basketBallContainer.getChild(1).removeChild(this.actualChosenBall.getParent());
-                        this.resetReferences();
-                    }
+            if (this.isDead) {
+                if (this.targetedBall && !this.hasCheckedEverything) {
+                    basketBalls.splice(basketBalls.indexOf(this.targetedBall.getParent()), 1);
+                    let rgdBdyToRemove: fCore.ComponentRigidbody = this.targetedBall.getComponent(fCore.ComponentRigidbody);
+                    this.targetedBall.removeComponent(rgdBdyToRemove);
+                    basketBallContainer.getChild(1).removeChild(this.targetedBall.getParent());
+                    this.resetReferences();
                     this.hasCheckedEverything = true;
-                    return;
                 }
-            if (this.isDead) return;
+                return;
+            }
             if (this.hasShot) {
                 this.idleTime = this.idleTime - fCore.Loop.timeFrameReal / 1000;
                 this.moveToRandomPoint();
@@ -98,7 +96,7 @@ namespace basketBallBattleRoyale {
             let howMuchActiveBalls: number = 0;
             basketBalls.forEach(basketBall => {
                 if (basketBall.getComponent(BasketBallsController))
-                    if (!basketBall.getComponent(BasketBallsController).isInEnemysUse && !basketBall.getComponent(BasketBallsController).isInPlayersUse)
+                    if (!this.targetedBall && !basketBall.getComponent(BasketBallsController).isInPlayersUse && !basketBall.getComponent(BasketBallsController).isInPlayersUse)
                         howMuchActiveBalls++;
             });
 
@@ -107,7 +105,7 @@ namespace basketBallBattleRoyale {
             this.allDistances = Array<number>(howMuchActiveBalls);
             for (let i: number = 0; i < basketBalls.length; i++) {
                 if (basketBalls[i].getComponent(BasketBallsController))
-                    if (!basketBalls[i].getComponent(BasketBallsController).isInEnemysUse && !basketBalls[i].getComponent(BasketBallsController).isInPlayersUse)
+                    if (!basketBalls[i].getComponent(BasketBallsController).isInEnemysUse && !basketBalls[i].getComponent(BasketBallsController).isInPlayersUse && !basketBalls[i].getComponent(BasketBallsController).isInFlight)
                         this.allDistances[i] = Math.floor(fCore.Vector3.DIFFERENCE(this.enemyContainer.mtxWorld.translation, basketBalls[i].mtxWorld.translation).magnitude);
             }
 
@@ -115,25 +113,30 @@ namespace basketBallBattleRoyale {
             basketBalls.forEach(basketBall => {
                 if (basketBall.getComponent(BasketBallsController)) {
                     if (sortedDistances[0] == Math.floor(fCore.Vector3.DIFFERENCE(this.enemyContainer.mtxWorld.translation, basketBall.mtxWorld.translation).magnitude))
-                        if (!basketBall.getComponent(BasketBallsController).isInEnemysUse || !basketBall.getComponent(BasketBallsController).isInPlayersUse || !basketBall.getComponent(BasketBallsController).isInFlight || !this.targetedBall)
+                        if (!basketBall.getComponent(BasketBallsController).isInPlayersUse || !basketBall.getComponent(BasketBallsController).isInFlight || !this.targetedBall) {
+                            basketBall.getComponent(BasketBallsController).isInEnemysUse = true;
                             this.targetedBall = basketBall;
+
+                        }
                         else if (sortedDistances[1] == Math.floor(fCore.Vector3.DIFFERENCE(this.enemyContainer.mtxWorld.translation, basketBall.mtxWorld.translation).magnitude))
-                            if (!basketBall.getComponent(BasketBallsController).isInEnemysUse || !basketBall.getComponent(BasketBallsController).isInPlayersUse || !basketBall.getComponent(BasketBallsController).isInFlight || !this.targetedBall)
+                            if (!basketBall.getComponent(BasketBallsController).isInPlayersUse || !basketBall.getComponent(BasketBallsController).isInFlight || !this.targetedBall) {
+                                basketBall.getComponent(BasketBallsController).isInEnemysUse = true;
                                 this.targetedBall = basketBall;
+                            }
                             else if (sortedDistances[2] == Math.floor(fCore.Vector3.DIFFERENCE(this.enemyContainer.mtxWorld.translation, basketBall.mtxWorld.translation).magnitude))
-                                if (!basketBall.getComponent(BasketBallsController).isInEnemysUse || !basketBall.getComponent(BasketBallsController).isInPlayersUse || !basketBall.getComponent(BasketBallsController).isInFlight || !this.targetedBall)
+                                if (!basketBall.getComponent(BasketBallsController).isInPlayersUse || !basketBall.getComponent(BasketBallsController).isInFlight || !this.targetedBall) {
+                                    basketBall.getComponent(BasketBallsController).isInEnemysUse = true;
                                     this.targetedBall = basketBall;
+                                }
                 }
             });
-            if (this.targetedBall)
-                this.targetedBall.getComponent(BasketBallsController).isInEnemysUse = true;
         }
 
 
         private moveToRandomPoint = (): void => {
             this.rgdBdyEnemy.setRotation(new fCore.Vector3(0, (this.enemyContainer.mtxWorld.translation.x - this.randomPointVec.x) - (this.enemyContainer.mtxWorld.translation.z - this.randomPointVec.z) * 10, 0));
             let distanceToRandom: number = fCore.Vector3.DIFFERENCE(new fCore.Vector3((this.randomPointVec.x - this.enemyContainer.mtxWorld.translation.x), 0, (this.randomPointVec.z - this.enemyContainer.mtxWorld.translation.z)), this.enemyContainer.mtxWorld.translation).magnitude;
-            if (distanceToRandom > 1) {
+            if (distanceToRandom > 3) {
                 if (this.rgdBdyEnemy.getVelocity().magnitude < this.speedThreshold)
                     this.rgdBdyEnemy.addVelocity(new fCore.Vector3((this.randomPointVec.x - this.enemyContainer.mtxWorld.translation.x), 0, (this.randomPointVec.z - this.enemyContainer.mtxWorld.translation.z)));
             }
@@ -178,12 +181,11 @@ namespace basketBallBattleRoyale {
                 this.isInGrabbingRange = false;
                 this.hasGrabbed = true;
                 this.actualChosenBall.getComponent(BasketBallsController).isInFlight = true;
+                this.actualChosenBall.getComponent(BasketBallsController).isInEnemysUse = false;
             }
 
             if (this.hasGrabbed) {
-
                 let randomTargetNmb: number = new fCore.Random().getRangeFloored(0, 4);
-                console.log(this.containerTriggers[randomTargetNmb].getContainer().getParent().name);
                 if (!this.containerTriggers[randomTargetNmb].getContainer().getParent().getChild(0).getChild(0).getComponent(fCore.ComponentRigidbody)) return;
                 if (this.myBsktTrigger == this.containerTriggers[randomTargetNmb]) return;
                 this.rndChosenTarget = this.containerTriggers[randomTargetNmb];
@@ -195,7 +197,7 @@ namespace basketBallBattleRoyale {
                     new fCore.Vector3(enemyForward.x * this.throwStrength, 275, enemyForward.z * this.throwStrength),
                     this.enemyContainer.mtxWorld.translation);
                 this.randomPointVec = new fCore.Vector3(fCore.random.getRangeFloored(-6, 6), 0, fCore.random.getRangeFloored(-6, 6));
-                this.idleTime = 2;
+                this.idleTime = 1.5;
                 this.hasShot = true;
             }
         }
@@ -205,7 +207,7 @@ namespace basketBallBattleRoyale {
             this.isInGrabbingRange = false;
             this.allDistances = null;
             this.hasGrabbed = false;
-            this.idleTime = 1;
+            this.idleTime = 1.5;
         }
     }
 }
