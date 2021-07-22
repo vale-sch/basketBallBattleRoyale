@@ -2,23 +2,32 @@ namespace basketBallBattleRoyale {
 
   import fCore = FudgeCore;
 
+  let cmpMeshFloorTiles: fCore.ComponentMesh[] = new Array(new fCore.ComponentMesh());
+  let floorContainer: fCore.Node;
+  let staticEnvContainer: fCore.Node;
+  let collMeshesOfBasketStand: fCore.ComponentMesh[] = new Array(new fCore.ComponentMesh());
+  let collMeshesOfBasketTrigger: fCore.ComponentMesh[] = new Array(new fCore.ComponentMesh());
+  let rgdBdyEnemies: fCore.ComponentRigidbody[] = new Array(new fCore.ComponentRigidbody());
+  let viewport: fCore.Viewport;
+
+  let shot: fCore.Audio = new fCore.Audio("/Audio/shot.wav");
+  let goal: fCore.Audio = new fCore.Audio("/Audio/goal.wav");
+  let background: fCore.Audio = new fCore.Audio("/Audio/background.mp3");
+  let win: fCore.Audio = new fCore.Audio("/Audio/win.wav");
+  let loose: fCore.Audio = new fCore.Audio("/Audio/loose.wav");
+  let death: fCore.Audio = new fCore.Audio("/Audio/death.mp3")
+  export let cmpAudShot: fCore.ComponentAudio = new fCore.ComponentAudio(shot);
+  export let cmpAudGoal: fCore.ComponentAudio = new fCore.ComponentAudio(goal);
+  export let cmpAudBackground: fCore.ComponentAudio = new fCore.ComponentAudio(background, true, true);
+  export let cmpAudWin: fCore.ComponentAudio = new fCore.ComponentAudio(win);
+  export let cmpAudLoose: fCore.ComponentAudio = new fCore.ComponentAudio(loose);
+  export let cmpAudDeath: fCore.ComponentAudio = new fCore.ComponentAudio(death);
   export let players: fCore.Node[] = new Array(new fCore.Node(""));
   export let avatarNode: fCore.Node;
   export let cmpCamera: fCore.ComponentCamera;
   export let cylFloor: fCore.Node;
   export let canvas: HTMLCanvasElement;
   export let playersContainer: fCore.Node;
-
-  let cmpMeshFloorTiles: fCore.ComponentMesh[] = new Array(new fCore.ComponentMesh());
-
-  let floorContainer: fCore.Node;
-  let staticEnvContainer: fCore.Node;
-
-  let collMeshesOfBasketStand: fCore.ComponentMesh[] = new Array(new fCore.ComponentMesh());
-  let collMeshesOfBasketTrigger: fCore.ComponentMesh[] = new Array(new fCore.ComponentMesh());
-  let rgdBdyEnemies: fCore.ComponentRigidbody[] = new Array(new fCore.ComponentRigidbody());
-
-  let viewport: fCore.Viewport;
 
   export async function init(): Promise<void> {
     //initialisation
@@ -67,6 +76,7 @@ namespace basketBallBattleRoyale {
       collMeshTrigger.activate(false);
     for (let cmpMeshFloorTile of cmpMeshFloorTiles)
       cmpMeshFloorTile.activate(false);
+    setupAudio();
     Hud.start();
 
     fCore.Loop.addEventListener(fCore.EVENT.LOOP_FRAME, update);
@@ -75,7 +85,30 @@ namespace basketBallBattleRoyale {
     console.log(bskBallRoot);
   }
 
+  function setupAudio(): void {
+    let cmpListener: fCore.ComponentAudioListener = new fCore.ComponentAudioListener();
+    cmpCamera.getContainer().addComponent(cmpListener);
 
+    let audioNode: fCore.Node = new fCore.Node("audioNode");
+
+    cmpAudBackground.volume = (parseInt(sliderAudio.value) / 100) / 1.5;
+    cmpAudGoal.volume = (parseInt(sliderAudio.value) / 100) / 2.5;
+    cmpAudShot.volume = (parseInt(sliderAudio.value) / 100);
+    cmpAudDeath.volume = (parseInt(sliderAudio.value) / 100) * 2;
+    cmpAudWin.volume = (parseInt(sliderAudio.value) / 100);
+    cmpAudLoose.volume = (parseInt(sliderAudio.value) / 100);
+
+    audioNode.addComponent(cmpAudBackground);
+    audioNode.addComponent(cmpAudGoal);
+    audioNode.addComponent(cmpAudShot);
+    audioNode.addComponent(cmpAudWin);
+    audioNode.addComponent(cmpAudLoose);
+    audioNode.addComponent(cmpAudDeath);
+    avatarNode.appendChild(audioNode);
+
+    fCore.AudioManager.default.listenWith(cmpListener);
+    fCore.AudioManager.default.listenTo(bskBallRoot);
+  }
   async function update(): Promise<void> {
     ƒ.Physics.world.simulate(fCore.Loop.timeFrameReal / 1000);
 

@@ -7,7 +7,7 @@ var basketBallBattleRoyale;
     class BasketBallBasketTrigger extends fCore.ComponentScript {
         constructor(_container) {
             super();
-            this.liveAmount = 1;
+            this.amountOfLifes = 10;
             this.removingTime = 0.75;
             this.isRemoving = false;
             this.hndTrigger = (_event) => {
@@ -24,41 +24,57 @@ var basketBallBattleRoyale;
                             this.parentToRemove = _event.cmpRigidbody.getContainer().getParent();
                         }
                     });
+                    basketBallBattleRoyale.cmpAudGoal.play(true);
                     this.rgdBdyToRemove = _event.cmpRigidbody;
                     switch (this.thisContainer.getParent().name) {
                         case ("BasketBallKorb_Avatar"):
-                            basketBallBattleRoyale.gameState.hitsAvatar = "avatar: " + ++this.liveAmount;
-                            if (this.liveAmount == 0) {
+                            basketBallBattleRoyale.gameState.hitsAvatar = "avatar: " + --this.avatarsLifes;
+                            if (this.avatarsLifes == 0) {
                                 this.looseMenu.hidden = false;
                                 this.retryButton.addEventListener("click", this.reloadPage);
+                                basketBallBattleRoyale.cmpAudDeath.play(true);
+                                basketBallBattleRoyale.cmpAudLoose.play(true);
                                 fCore.Loop.stop();
                             }
                             break;
                         case ("BasketBallKorb_EnemyBlue"):
-                            basketBallBattleRoyale.gameState.hitsEnemyBlue = "enemy-blue: " + --this.liveAmount;
-                            if (this.liveAmount == 0) {
+                            basketBallBattleRoyale.gameState.hitsEnemyBlue = "enemy-blue: " + --this.amountOfLifes;
+                            if (this.amountOfLifes == 0) {
+                                basketBallBattleRoyale.cmpAudDeath.play(true);
                                 basketBallBattleRoyale.gameState.hitsEnemyBlue = "dead";
                                 this.getRidOfNodeAndRgdbdy();
                             }
                             break;
                         case ("BasketBallKorb_EnemyRed"):
-                            basketBallBattleRoyale.gameState.hitsEnemyRed = "enemy-red: " + --this.liveAmount;
-                            if (this.liveAmount == 0) {
+                            basketBallBattleRoyale.gameState.hitsEnemyRed = "enemy-red: " + --this.amountOfLifes;
+                            if (this.amountOfLifes == 0) {
+                                basketBallBattleRoyale.cmpAudDeath.play(true);
                                 basketBallBattleRoyale.gameState.hitsEnemyRed = "dead";
                                 this.getRidOfNodeAndRgdbdy();
                             }
                             break;
                         case ("BasketBallKorb_EnemyMagenta"):
-                            basketBallBattleRoyale.gameState.hitsEnemyMagenta = "enemy-magenta: " + --this.liveAmount;
-                            if (this.liveAmount == 0) {
+                            basketBallBattleRoyale.gameState.hitsEnemyMagenta = "enemy-magenta: " + --this.amountOfLifes;
+                            if (this.amountOfLifes == 0) {
+                                basketBallBattleRoyale.cmpAudDeath.play(true);
                                 basketBallBattleRoyale.gameState.hitsEnemyMagenta = "dead";
                                 this.getRidOfNodeAndRgdbdy();
                             }
                             break;
                     }
                     if (basketBallBattleRoyale.alivePlayers == 1) {
+                        if (localStorage.getItem("harderVersion")) {
+                            this.winText = document.querySelector("#winText");
+                            this.winText.innerHTML = "you have won the game, congrats!";
+                            this.buttonWinText = document.querySelector("#text");
+                            //this.buttonWinText.innerHTML = "";
+                            this.nextLevelButton.innerHTML = "restart to menu with standard values ";
+                            this.nextLevelButton.addEventListener("click", this.reloadPage);
+                        }
+                        else
+                            this.nextLevelButton.addEventListener("click", this.writeNewDifficulty);
+                        basketBallBattleRoyale.cmpAudWin.play(true);
                         this.winMenu.hidden = false;
-                        this.nextLevelButton.addEventListener("click", this.writeNewDifficulty);
                     }
                     this.isRemoving = true;
                 }
@@ -103,33 +119,33 @@ var basketBallBattleRoyale;
             this.thisContainer.getComponent(fCore.ComponentRigidbody).addEventListener("TriggerEnteredCollision" /* TRIGGER_ENTER */, this.hndTrigger);
             fCore.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update);
             fCore.Loop.start(fCore.LOOP_MODE.TIME_REAL, 10);
+            if (localStorage.getItem("harderVersion"))
+                this.avatarsLifes = this.amountOfLifes - 2;
+            else
+                this.avatarsLifes = this.amountOfLifes + 5;
             switch (this.thisContainer.getParent().name) {
                 case ("BasketBallKorb_Avatar"):
-                    basketBallBattleRoyale.gameState.hitsAvatar = "avatar: " + this.liveAmount;
+                    basketBallBattleRoyale.gameState.hitsAvatar = "avatar: " + this.avatarsLifes;
                     break;
                 case ("BasketBallKorb_EnemyBlue"):
-                    basketBallBattleRoyale.gameState.hitsEnemyBlue = "enemy-blue: " + this.liveAmount;
+                    basketBallBattleRoyale.gameState.hitsEnemyBlue = "enemy-blue: " + this.amountOfLifes;
                     break;
                 case ("BasketBallKorb_EnemyRed"):
-                    basketBallBattleRoyale.gameState.hitsEnemyRed = "enemy-red: " + this.liveAmount;
+                    basketBallBattleRoyale.gameState.hitsEnemyRed = "enemy-red: " + this.amountOfLifes;
                     break;
                 case ("BasketBallKorb_EnemyMagenta"):
-                    basketBallBattleRoyale.gameState.hitsEnemyMagenta = "enemy-magenta: " + this.liveAmount;
+                    basketBallBattleRoyale.gameState.hitsEnemyMagenta = "enemy-magenta: " + this.amountOfLifes;
                     break;
             }
             basketBallBattleRoyale.alivePlayers = basketBallBattleRoyale.players.length;
         }
         reloadPage() {
+            localStorage.clear();
             window.location.reload();
         }
         async writeNewDifficulty() {
-            let newDifficulty = 0;
-            let response = await fetch("./JSON/Config.json");
-            let textResponse = await response.text();
-            let array = textResponse.split("_");
-            array.forEach(element => {
-                console.log(element);
-            });
+            localStorage.setItem("harderVersion", "true");
+            window.location.reload();
         }
     }
     basketBallBattleRoyale.BasketBallBasketTrigger = BasketBallBasketTrigger;

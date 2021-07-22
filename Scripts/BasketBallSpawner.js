@@ -12,6 +12,7 @@ var basketBallBattleRoyale;
                 }
             };
             this.start();
+            console.log("basketball spawner is initialized!");
         }
         async start() {
             basketBallBattleRoyale.basketBallContainer = basketBallBattleRoyale.bskBallRoot.getChild(1);

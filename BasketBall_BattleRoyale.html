@@ -86,7 +86,7 @@
         <div id="menu">
             <div class="btn-group">
                 <h1
-                    style="color: whitesmoke; font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; font-size: 50px;">
+                    style="color: whitesmoke; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-size: 70px;">
                     welcome to basketball battleroyale</h1>
                 <button id="playButton" class="button" type="button">
                     <h2>PLAY</h2>
@@ -94,13 +94,46 @@
                 <button id="optionsButton" class="button" type="button">
                     <h2>OPTIONS</h2>
                 </button>
+                <br><br><br><br><br><br><br><br><br>
+                <h4
+                    style="color: whitesmoke; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-size: 25px;">
+                    controls </h4>
+                <h2
+                    style="color: whitesmoke; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-size: 20px;">
+                    w & s --> forward & backward moving</h4>
+
+                    <h2
+                        style="color: whitesmoke; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-size: 20px;">
+                        mouse --> x & y rotatation</h4>
+
+                        <h2
+                            style="color: whitesmoke; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-size: 20px;">
+                            e --> pick up ball</h4>
+
+                            <h2
+                                style="color: whitesmoke; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-size: 20px;">
+                                space --> hold to fill up power-bar --> release to shoot</h4>
+            </div>
+        </div>
+
+        <div id="optionMenu" hidden="true">
+            <div class="btn-group">
+                <h1
+                    style="color: whitesmoke; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-size: 100px;">
+                    audio volume</h1>
+                <br>
+                <input id="myRange" type="range" min="0" max="100" value="35" class="slider">
+                <br>
+                <button id="goBack" class="button" type="button">
+                    <h2>GO BACK</h2>
+                </button>
             </div>
         </div>
 
         <div id="loose" hidden="true">
             <div class="btn-group">
                 <h1
-                    style="color: whitesmoke; font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; font-size: 50px;">
+                    style="color: whitesmoke; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-size: 50px;">
                     you lost all your lifes</h1>
                 <button id="retryButton" class="button" type="button">
                     <h2>RETRY</h2>
@@ -110,11 +143,12 @@
 
         <div id="win" hidden="true">
             <div class="btn-group">
-                <h1
-                    style="color: whitesmoke; font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; font-size: 50px;">
+                <h1 id="winText"
+                    style="color: whitesmoke;  font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-size: 50px;">
                     you won this round, congratulations!</h1>
                 <button id="nextLevel" class="button" type="button">
                     <h2>HARDER VERSION</h2>
+                    <h4 id="text">you will get redirected to menu with harder difficulties</h4>
                 </button>
             </div>
         </div>

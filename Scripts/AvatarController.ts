@@ -65,10 +65,10 @@ namespace basketBallBattleRoyale {
     export class AvatarController {
         private forwardMovement: number = 0;
         private backwardMovement: number = 0;
-        private movementspeed: number = 5;
+        private movementspeed: number;
         private frictionFactor: number = 8;
         private throwStrength: number = 450;
-        private nearestDistance: number = 5;
+        private nearestDistance: number = 6;
         private actualChosenBall: fCore.Node;
         private cmpAvatar: fCore.ComponentRigidbody;
         private childAvatarNode: fCore.Node;
@@ -89,9 +89,16 @@ namespace basketBallBattleRoyale {
 
         }
 
-        public start(): void {
+        public async start(): Promise<void> {
             this.createAvatar();
-            console.log("Avatar is initialized!");
+            console.log("avatar is initialized!");
+            let response: Response = await fetch("./JSON/Config.json");
+            let textResponse: string = await response.text();
+            let asd: string[] = textResponse.split(":");
+            let playerSpeed: number = parseInt(asd[1]);
+            this.movementspeed = playerSpeed;
+            if (localStorage.getItem("harderVersion"))
+                this.movementspeed = playerSpeed - 1;
             fCore.Loop.addEventListener(fCore.EVENT.LOOP_FRAME, this.update);
             fCore.Loop.start(fCore.LOOP_MODE.TIME_REAL, 60);
         }
@@ -145,13 +152,17 @@ namespace basketBallBattleRoyale {
 
             if (this.isGrabbed && this.actualChosenBall) {
                 this.highlightTargetedBasket();
+                if (!this.actualChosenBall.getComponent(fCore.ComponentRigidbody)) return;
                 this.actualChosenBall.getComponent(fCore.ComponentRigidbody).setVelocity(fCore.Vector3.ZERO());
                 this.actualChosenBall.mtxWorld.translate(this.childAvatarNode.mtxWorld.translation);
                 this.actualChosenBall.getComponent(fCore.ComponentRigidbody).setPosition(this.childAvatarNode.mtxWorld.translation);
                 // which target was chosen from raycast-info
                 if (rIsPressed)
                     if (gameState.shootBar <= 12)
-                        gameState.shootBar += fCore.Loop.timeFrameReal / 100;
+                        if (!localStorage.getItem("harderVersion"))
+                            gameState.shootBar += fCore.Loop.timeFrameReal / 100;
+                        else
+                            gameState.shootBar += fCore.Loop.timeFrameReal / 50;
 
                 if (rIsReleased) {
                     this.power = gameState.shootBar * 40;
@@ -264,7 +275,7 @@ namespace basketBallBattleRoyale {
                 new fCore.Vector3(playerForward.x * this.throwStrength, this.power, playerForward.z * this.throwStrength),
                 avatarNode.mtxWorld.translation);
 
-
+            cmpAudShot.play(true);
             this.isGrabbed = false;
             this.hasShot = true;
             this.timer = 2;

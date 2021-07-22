@@ -30,7 +30,8 @@ namespace basketBallBattleRoyale {
             this.rgdBdyEnemy = _rgdBdyEnemy;
             this.enemyContainer = _rgdBdyEnemy.getContainer();
             this.containerTriggers = _containerTriggers;
-
+            if (localStorage.getItem("harderVersion"))
+                this.speedThreshold = 16;
             this.childEnemyNode = new fCore.Node("childAvatarNode");
             this.childEnemyNode.addComponent(new fCore.ComponentTransform());
             this.childEnemyNode.mtxLocal.translate(new fCore.Vector3(0, 3, 0));
@@ -39,6 +40,7 @@ namespace basketBallBattleRoyale {
             this.whoAmI();
             fCore.Loop.addEventListener(fCore.EVENT.LOOP_FRAME, this.update);
             fCore.Loop.start(fCore.LOOP_MODE.TIME_REAL, 60);
+            console.log("enemy is initialized!");
         }
         private whoAmI = (): void => {
             this.containerTriggers.forEach(trigger => {
@@ -198,6 +200,7 @@ namespace basketBallBattleRoyale {
                     this.enemyContainer.mtxWorld.translation);
                 this.randomPointVec = new fCore.Vector3(fCore.random.getRangeFloored(-6, 6), 0, fCore.random.getRangeFloored(-6, 6));
                 this.idleTime = 1.5;
+                cmpAudShot.play(true);
                 this.hasShot = true;
             }
         }

@@ -13,6 +13,8 @@ namespace basketBallBattleRoyale {
         private ballIterator: number;
         constructor() {
             this.start();
+            console.log("basketball spawner is initialized!");
+
         }
         private async start(): Promise<void> {
 

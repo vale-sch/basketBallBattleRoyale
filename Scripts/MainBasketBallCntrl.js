@@ -2,7 +2,6 @@
 var basketBallBattleRoyale;
 (function (basketBallBattleRoyale) {
     var fCore = FudgeCore;
-    basketBallBattleRoyale.players = new Array(new fCore.Node(""));
     let cmpMeshFloorTiles = new Array(new fCore.ComponentMesh());
     let floorContainer;
     let staticEnvContainer;
@@ -10,6 +9,19 @@ var basketBallBattleRoyale;
     let collMeshesOfBasketTrigger = new Array(new fCore.ComponentMesh());
     let rgdBdyEnemies = new Array(new fCore.ComponentRigidbody());
     let viewport;
+    let shot = new fCore.Audio("/Audio/shot.wav");
+    let goal = new fCore.Audio("/Audio/goal.wav");
+    let background = new fCore.Audio("/Audio/background.mp3");
+    let win = new fCore.Audio("/Audio/win.wav");
+    let loose = new fCore.Audio("/Audio/loose.wav");
+    let death = new fCore.Audio("/Audio/death.mp3");
+    basketBallBattleRoyale.cmpAudShot = new fCore.ComponentAudio(shot);
+    basketBallBattleRoyale.cmpAudGoal = new fCore.ComponentAudio(goal);
+    basketBallBattleRoyale.cmpAudBackground = new fCore.ComponentAudio(background, true, true);
+    basketBallBattleRoyale.cmpAudWin = new fCore.ComponentAudio(win);
+    basketBallBattleRoyale.cmpAudLoose = new fCore.ComponentAudio(loose);
+    basketBallBattleRoyale.cmpAudDeath = new fCore.ComponentAudio(death);
+    basketBallBattleRoyale.players = new Array(new fCore.Node(""));
     async function init() {
         //initialisation
         await fCore.Project.loadResourcesFromHTML();
@@ -45,12 +57,33 @@ var basketBallBattleRoyale;
             collMeshTrigger.activate(false);
         for (let cmpMeshFloorTile of cmpMeshFloorTiles)
             cmpMeshFloorTile.activate(false);
+        setupAudio();
         basketBallBattleRoyale.Hud.start();
         fCore.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
         fCore.Loop.start(fCore.LOOP_MODE.TIME_REAL, 60);
         console.log(basketBallBattleRoyale.bskBallRoot);
     }
     basketBallBattleRoyale.init = init;
+    function setupAudio() {
+        let cmpListener = new fCore.ComponentAudioListener();
+        basketBallBattleRoyale.cmpCamera.getContainer().addComponent(cmpListener);
+        let audioNode = new fCore.Node("audioNode");
+        basketBallBattleRoyale.cmpAudBackground.volume = (parseInt(basketBallBattleRoyale.sliderAudio.value) / 100) / 1.5;
+        basketBallBattleRoyale.cmpAudGoal.volume = (parseInt(basketBallBattleRoyale.sliderAudio.value) / 100) / 2.5;
+        basketBallBattleRoyale.cmpAudShot.volume = (parseInt(basketBallBattleRoyale.sliderAudio.value) / 100);
+        basketBallBattleRoyale.cmpAudDeath.volume = (parseInt(basketBallBattleRoyale.sliderAudio.value) / 100) * 2;
+        basketBallBattleRoyale.cmpAudWin.volume = (parseInt(basketBallBattleRoyale.sliderAudio.value) / 100);
+        basketBallBattleRoyale.cmpAudLoose.volume = (parseInt(basketBallBattleRoyale.sliderAudio.value) / 100);
+        audioNode.addComponent(basketBallBattleRoyale.cmpAudBackground);
+        audioNode.addComponent(basketBallBattleRoyale.cmpAudGoal);
+        audioNode.addComponent(basketBallBattleRoyale.cmpAudShot);
+        audioNode.addComponent(basketBallBattleRoyale.cmpAudWin);
+        audioNode.addComponent(basketBallBattleRoyale.cmpAudLoose);
+        audioNode.addComponent(basketBallBattleRoyale.cmpAudDeath);
+        basketBallBattleRoyale.avatarNode.appendChild(audioNode);
+        fCore.AudioManager.default.listenWith(cmpListener);
+        fCore.AudioManager.default.listenTo(basketBallBattleRoyale.bskBallRoot);
+    }
     async function update() {
         ƒ.Physics.world.simulate(fCore.Loop.timeFrameReal / 1000);
         //debug keyboard events

@@ -59,10 +59,9 @@ var basketBallBattleRoyale;
         constructor(_players) {
             this.forwardMovement = 0;
             this.backwardMovement = 0;
-            this.movementspeed = 5;
             this.frictionFactor = 8;
             this.throwStrength = 450;
-            this.nearestDistance = 5;
+            this.nearestDistance = 6;
             this.power = 0;
             this.progressBar = document.querySelector("#shootBar");
             this.update = () => {
@@ -83,13 +82,18 @@ var basketBallBattleRoyale;
                 //sub functionality of isGrabbingObjects();
                 if (this.isGrabbed && this.actualChosenBall) {
                     this.highlightTargetedBasket();
+                    if (!this.actualChosenBall.getComponent(fCore.ComponentRigidbody))
+                        return;
                     this.actualChosenBall.getComponent(fCore.ComponentRigidbody).setVelocity(fCore.Vector3.ZERO());
                     this.actualChosenBall.mtxWorld.translate(this.childAvatarNode.mtxWorld.translation);
                     this.actualChosenBall.getComponent(fCore.ComponentRigidbody).setPosition(this.childAvatarNode.mtxWorld.translation);
                     // which target was chosen from raycast-info
                     if (rIsPressed)
                         if (basketBallBattleRoyale.gameState.shootBar <= 12)
-                            basketBallBattleRoyale.gameState.shootBar += fCore.Loop.timeFrameReal / 100;
+                            if (!localStorage.getItem("harderVersion"))
+                                basketBallBattleRoyale.gameState.shootBar += fCore.Loop.timeFrameReal / 100;
+                            else
+                                basketBallBattleRoyale.gameState.shootBar += fCore.Loop.timeFrameReal / 50;
                     if (rIsReleased) {
                         this.power = basketBallBattleRoyale.gameState.shootBar * 40;
                         basketBallBattleRoyale.gameState.shootBar = 0;
@@ -107,9 +111,16 @@ var basketBallBattleRoyale;
             document.addEventListener("keyup", handler_Key_Released);
             window.addEventListener("mousemove", onMouseMove);
         }
-        start() {
+        async start() {
             this.createAvatar();
-            console.log("Avatar is initialized!");
+            console.log("avatar is initialized!");
+            let response = await fetch("./JSON/Config.json");
+            let textResponse = await response.text();
+            let asd = textResponse.split(":");
+            let playerSpeed = parseInt(asd[1]);
+            this.movementspeed = playerSpeed;
+            if (localStorage.getItem("harderVersion"))
+                this.movementspeed = playerSpeed - 1;
             fCore.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update);
             fCore.Loop.start(fCore.LOOP_MODE.TIME_REAL, 60);
         }
@@ -213,6 +224,7 @@ var basketBallBattleRoyale;
             playerForward.transform(basketBallBattleRoyale.avatarNode.mtxWorld, false);
             //diffrent powers for diffrent distances
             this.actualChosenBall.getComponent(fCore.ComponentRigidbody).applyImpulseAtPoint(new fCore.Vector3(playerForward.x * this.throwStrength, this.power, playerForward.z * this.throwStrength), basketBallBattleRoyale.avatarNode.mtxWorld.translation);
+            basketBallBattleRoyale.cmpAudShot.play(true);
             this.isGrabbed = false;
             this.hasShot = true;
             this.timer = 2;
