@@ -10,12 +10,12 @@ namespace basketBallBattleRoyale {
   let rgdBdyEnemies: fCore.ComponentRigidbody[] = new Array(new fCore.ComponentRigidbody());
   let viewport: fCore.Viewport;
 
-  let shot: fCore.Audio = new fCore.Audio("/Audio/shot.wav");
-  let goal: fCore.Audio = new fCore.Audio("/Audio/goal.wav");
-  let background: fCore.Audio = new fCore.Audio("/Audio/background.mp3");
-  let win: fCore.Audio = new fCore.Audio("/Audio/win.wav");
-  let loose: fCore.Audio = new fCore.Audio("/Audio/loose.wav");
-  let death: fCore.Audio = new fCore.Audio("/Audio/death.mp3");
+  let shot: fCore.Audio = new fCore.Audio("/basketBallBattleRoyale/Audio/shot.wav");
+  let goal: fCore.Audio = new fCore.Audio("/basketBallBattleRoyale/Audio/goal.wav");
+  let background: fCore.Audio = new fCore.Audio("/basketBallBattleRoyale/Audio/background.mp3");
+  let win: fCore.Audio = new fCore.Audio("/basketBallBattleRoyale/Audio/win.wav");
+  let loose: fCore.Audio = new fCore.Audio("/basketBallBattleRoyale/Audio/loose.wav");
+  let death: fCore.Audio = new fCore.Audio("/basketBallBattleRoyale/Audio/death.mp3");
   export let cmpAudBackground: fCore.ComponentAudio = new fCore.ComponentAudio(background, true, true);
   export let cmpAudShot: fCore.ComponentAudio = new fCore.ComponentAudio(shot);
   export let cmpAudGoal: fCore.ComponentAudio = new fCore.ComponentAudio(goal);
