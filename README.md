@@ -3,7 +3,7 @@ Repository for the module "Prototyping interactive media-applications and games"
 # Links/Abgabe
 - [Zum Spiel](https://vale-sch.github.io/basketBallBattleRoyale/BasketBall_BattleRoyale.html)
 - [Zum Designdokument](https://github.com/vale-sch/basketBallBattleRoyale/blob/main/Designdokument_PRIMA_SchmidbergerValentin_263249_MIB4.pdf)
-- [Zu den Skripen](https://github.com/vale-sch/basketBallBattleRoyale/tree/main/Scripts)
+- [Zu den Skripten](https://github.com/vale-sch/basketBallBattleRoyale/tree/main/Scripts)
 - [Gepacktes Archiv](https://github.com/vale-sch/basketBallBattleRoyale/blob/main/basketBallBattleRoyale_allZipped_SchmidbergerValentin_263249_MIB4.zip)
 
 # how to play it locally
