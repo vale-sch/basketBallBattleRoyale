@@ -15,13 +15,14 @@ namespace basketBallBattleRoyale {
   let background: fCore.Audio = new fCore.Audio("/Audio/background.mp3");
   let win: fCore.Audio = new fCore.Audio("/Audio/win.wav");
   let loose: fCore.Audio = new fCore.Audio("/Audio/loose.wav");
-  let death: fCore.Audio = new fCore.Audio("/Audio/death.mp3")
+  let death: fCore.Audio = new fCore.Audio("/Audio/death.mp3");
+  export let cmpAudBackground: fCore.ComponentAudio = new fCore.ComponentAudio(background, true, true);
   export let cmpAudShot: fCore.ComponentAudio = new fCore.ComponentAudio(shot);
   export let cmpAudGoal: fCore.ComponentAudio = new fCore.ComponentAudio(goal);
-  export let cmpAudBackground: fCore.ComponentAudio = new fCore.ComponentAudio(background, true, true);
   export let cmpAudWin: fCore.ComponentAudio = new fCore.ComponentAudio(win);
   export let cmpAudLoose: fCore.ComponentAudio = new fCore.ComponentAudio(loose);
   export let cmpAudDeath: fCore.ComponentAudio = new fCore.ComponentAudio(death);
+
   export let players: fCore.Node[] = new Array(new fCore.Node(""));
   export let avatarNode: fCore.Node;
   export let cmpCamera: fCore.ComponentCamera;
@@ -91,12 +92,12 @@ namespace basketBallBattleRoyale {
 
     let audioNode: fCore.Node = new fCore.Node("audioNode");
 
-    cmpAudBackground.volume = (parseInt(sliderAudio.value) / 100) / 1.5;
+    cmpAudBackground.volume = (parseInt(sliderAudio.value) / 100) / 1.25;
     cmpAudGoal.volume = (parseInt(sliderAudio.value) / 100) / 2.5;
     cmpAudShot.volume = (parseInt(sliderAudio.value) / 100);
     cmpAudDeath.volume = (parseInt(sliderAudio.value) / 100) * 2;
-    cmpAudWin.volume = (parseInt(sliderAudio.value) / 100);
-    cmpAudLoose.volume = (parseInt(sliderAudio.value) / 100);
+    cmpAudWin.volume = (parseInt(sliderAudio.value) / 100) * 2;
+    cmpAudLoose.volume = (parseInt(sliderAudio.value) / 100) * 2;
 
     audioNode.addComponent(cmpAudBackground);
     audioNode.addComponent(cmpAudGoal);

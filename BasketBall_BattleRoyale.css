@@ -65,15 +65,18 @@ div{
 progress{
   position: absolute;
   bottom: 5%;
-  right: 2%;
+  right: 5%;
 }
 p{
   position: absolute;
   color: red;
   font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-  font-size: 50px;
-  bottom: 0%;
-  right: 43%;
+  font-size: 60px;
+  bottom: 5%;
+  right: 0%;
+  text-align: center;
+  margin: auto ;
+
 }
 progress::-webkit-progress-bar {
   border-radius: 25px;

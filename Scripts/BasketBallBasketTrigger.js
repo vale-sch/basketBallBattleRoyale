@@ -32,8 +32,10 @@ var basketBallBattleRoyale;
                             if (this.avatarsLifes == 0) {
                                 this.looseMenu.hidden = false;
                                 this.retryButton.addEventListener("click", this.reloadPage);
+                                basketBallBattleRoyale.isInMenu = true;
                                 basketBallBattleRoyale.cmpAudDeath.play(true);
                                 basketBallBattleRoyale.cmpAudLoose.play(true);
+                                basketBallBattleRoyale.cmpAudBackground.play(false);
                                 fCore.Loop.stop();
                             }
                             break;
@@ -63,11 +65,10 @@ var basketBallBattleRoyale;
                             break;
                     }
                     if (basketBallBattleRoyale.alivePlayers == 1) {
+                        basketBallBattleRoyale.isInMenu = true;
                         if (localStorage.getItem("harderVersion")) {
                             this.winText = document.querySelector("#winText");
                             this.winText.innerHTML = "you have won the game, congrats!";
-                            this.buttonWinText = document.querySelector("#text");
-                            //this.buttonWinText.innerHTML = "";
                             this.nextLevelButton.innerHTML = "restart to menu with standard values ";
                             this.nextLevelButton.addEventListener("click", this.reloadPage);
                         }

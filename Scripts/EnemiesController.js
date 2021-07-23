@@ -24,10 +24,12 @@ var basketBallBattleRoyale;
             this.update = () => {
                 if (this.isDead) {
                     if (this.targetedBall && !this.hasCheckedEverything) {
-                        basketBallBattleRoyale.basketBalls.splice(basketBallBattleRoyale.basketBalls.indexOf(this.targetedBall.getParent()), 1);
-                        let rgdBdyToRemove = this.targetedBall.getComponent(fCore.ComponentRigidbody);
-                        this.targetedBall.removeComponent(rgdBdyToRemove);
-                        basketBallBattleRoyale.basketBallContainer.getChild(1).removeChild(this.targetedBall.getParent());
+                        if (this.targetedBall.getComponent(fCore.ComponentRigidbody)) {
+                            basketBallBattleRoyale.basketBalls.splice(basketBallBattleRoyale.basketBalls.indexOf(this.targetedBall.getParent()), 1);
+                            let rgdBdyToRemove = this.targetedBall.getComponent(fCore.ComponentRigidbody);
+                            this.targetedBall.removeComponent(rgdBdyToRemove);
+                            basketBallBattleRoyale.basketBallContainer.getChild(1).removeChild(this.targetedBall.getParent());
+                        }
                         this.resetReferences();
                         this.hasCheckedEverything = true;
                     }

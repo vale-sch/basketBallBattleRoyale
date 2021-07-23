@@ -7,7 +7,7 @@
 
     <meta charset="utf-8" />
     <!--Load FUDGE-->
-    <script type="text/javascript" src="/FudgePhysics/OimoPhysics.js">
+    <!-- <script type="text/javascript" src="/FudgePhysics/OimoPhysics.js">
     </script>
     <script type="text/javascript" src="../FudgeCore/FudgeCore.js">
     </script>
@@ -37,16 +37,17 @@
     </script>
     <script type="text/javascript" src="./Scripts/Hud.js">
     </script>
-    <!-- <script type="text/javascript" src="/basketBallBattleRoyale/FudgePhysics/OimoPhysics.js">
+    <script type="text/javascript" src="/basketBallBattleRoyale/FudgePhysics/OimoPhysics.js">
     </script>
     <script type="text/javascript" src="/basketBallBattleRoyale/FudgeCore/FudgeCore.js">
     </script>
     <script type="text/javascript" src="/basketBallBattleRoyale/Aid/FudgeAid.js">
     </script>
-    <script type="text/javascript" src="/basketBallBattleRoyale/UserInterface/Build/FudgeUserInterface.js">
+    <script type="text/javascript" src="/basketBallBattleRoyale/UserInterface/Build/FudgeUserInterface.js"> -->
     </script>
 
-
+    <script type="text/javascript" src="/basketBallBattleRoyale/Scripts/BasketBallMenu.js">
+    </script>
     <script type="text/javascript" src="/basketBallBattleRoyale/Scripts/MainBasketBallCntrl.js">
     </script>
     <script type="text/javascript" src="/basketBallBattleRoyale/Scripts/BasketBallSpawner.js">
@@ -60,7 +61,7 @@
 
     </script>
     <script type="text/javascript" src="/basketBallBattleRoyale/Scripts/Hud.js">
-    </script> -->
+    </script>
 
 
     <!--Link stylesheet and internal resources-->
@@ -94,25 +95,32 @@
                 <button id="optionsButton" class="button" type="button">
                     <h2>OPTIONS</h2>
                 </button>
-                <br><br><br><br><br><br><br><br><br>
+                <br><br><br><br><br><br><br>
                 <h4
-                    style="color: whitesmoke; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-size: 25px;">
+                    style="color: red; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-size: 25px;">
                     controls </h4>
-                <h2
+                <h2 <h2
                     style="color: whitesmoke; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-size: 20px;">
                     w & s --> forward & backward moving</h4>
 
                     <h2
                         style="color: whitesmoke; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-size: 20px;">
-                        mouse --> x & y rotatation</h4>
+                        mouse --> x & y rotation</h4>
 
                         <h2
                             style="color: whitesmoke; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-size: 20px;">
-                            e --> pick up ball</h4>
+                            e --> to pick up ball which is near to you--> powerbar will appear in the right bottom
+                            corner</h4>
 
                             <h2
                                 style="color: whitesmoke; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-size: 20px;">
-                                space --> hold to fill up power-bar --> release to shoot</h4>
+                                space --> hold to fill up powerbar --> release to shoot</h2><br><br>
+                            <h2
+                                style="color: whitesmoke; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-size: 20px;">
+                                win round --> get the lifes of your competitors to zero, by goaling their baskets</h2>
+                            <h2
+                                style="color: red; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-size: 20px;">
+                                --> if you won the round, the difficulties will increase</h2>
             </div>
         </div>
 
@@ -135,6 +143,9 @@
                 <h1
                     style="color: whitesmoke; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-size: 50px;">
                     you lost all your lifes</h1>
+                <h1
+                    style="color: whitesmoke; font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; font-size: 50px;">
+                    hint: you can also grab balls from competitors heads</h1>
                 <button id="retryButton" class="button" type="button">
                     <h2>RETRY</h2>
                 </button>

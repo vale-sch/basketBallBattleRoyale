@@ -55,10 +55,12 @@ namespace basketBallBattleRoyale {
         private update = (): void => {
             if (this.isDead) {
                 if (this.targetedBall && !this.hasCheckedEverything) {
-                    basketBalls.splice(basketBalls.indexOf(this.targetedBall.getParent()), 1);
-                    let rgdBdyToRemove: fCore.ComponentRigidbody = this.targetedBall.getComponent(fCore.ComponentRigidbody);
-                    this.targetedBall.removeComponent(rgdBdyToRemove);
-                    basketBallContainer.getChild(1).removeChild(this.targetedBall.getParent());
+                    if (this.targetedBall.getComponent(fCore.ComponentRigidbody)) {
+                        basketBalls.splice(basketBalls.indexOf(this.targetedBall.getParent()), 1);
+                        let rgdBdyToRemove: fCore.ComponentRigidbody = this.targetedBall.getComponent(fCore.ComponentRigidbody);
+                        this.targetedBall.removeComponent(rgdBdyToRemove);
+                        basketBallContainer.getChild(1).removeChild(this.targetedBall.getParent());
+                    }
                     this.resetReferences();
                     this.hasCheckedEverything = true;
                 }

@@ -21,8 +21,9 @@ namespace basketBallBattleRoyale {
     }
     let isPointerInGame: boolean;
     function onPointerDown(_event: MouseEvent): void {
-        if (!isPointerInGame)
-            canvas.requestPointerLock();
+        if (!isInMenu)
+            if (!isPointerInGame)
+                canvas.requestPointerLock();
     }
 
     function pointerLockChange(_event: Event): void {
@@ -152,7 +153,10 @@ namespace basketBallBattleRoyale {
 
             if (this.isGrabbed && this.actualChosenBall) {
                 this.highlightTargetedBasket();
-                if (!this.actualChosenBall.getComponent(fCore.ComponentRigidbody)) return;
+                if (!this.actualChosenBall.getComponent(fCore.ComponentRigidbody)) {
+                    this.actualChosenBall = null;
+                    return;
+                }
                 this.actualChosenBall.getComponent(fCore.ComponentRigidbody).setVelocity(fCore.Vector3.ZERO());
                 this.actualChosenBall.mtxWorld.translate(this.childAvatarNode.mtxWorld.translation);
                 this.actualChosenBall.getComponent(fCore.ComponentRigidbody).setPosition(this.childAvatarNode.mtxWorld.translation);
@@ -162,7 +166,7 @@ namespace basketBallBattleRoyale {
                         if (!localStorage.getItem("harderVersion"))
                             gameState.shootBar += fCore.Loop.timeFrameReal / 100;
                         else
-                            gameState.shootBar += fCore.Loop.timeFrameReal / 50;
+                            gameState.shootBar += fCore.Loop.timeFrameReal / 75;
 
                 if (rIsReleased) {
                     this.power = gameState.shootBar * 40;
@@ -259,12 +263,17 @@ namespace basketBallBattleRoyale {
         private shootCalculation(): void {
 
             let targetOfMesh: fCore.Node;
-            if (this.oldRayHit.rigidbodyComponent.getContainer().getParent())
-                targetOfMesh = this.oldRayHit.rigidbodyComponent.getContainer().getParent();
-            targetOfMesh.getComponent(fCore.ComponentMaterial).clrPrimary.a = 0.5;
-            targetOfMesh.getChildren().forEach(childMesh => {
-                childMesh.getComponent(fCore.ComponentMaterial).clrPrimary.a = 0.5;
-            });
+            if (this.oldRayHit)
+                if (this.oldRayHit.rigidbodyComponent.getContainer())
+                    if (this.oldRayHit.rigidbodyComponent.getContainer().getParent())
+                        targetOfMesh = this.oldRayHit.rigidbodyComponent.getContainer().getParent();
+            if (targetOfMesh.getComponent(fCore.ComponentMaterial)) {
+                targetOfMesh.getComponent(fCore.ComponentMaterial).clrPrimary.a = 0.5;
+                targetOfMesh.getChildren().forEach(childMesh => {
+                    childMesh.getComponent(fCore.ComponentMaterial).clrPrimary.a = 0.5;
+                });
+            }
+
             let playerForward: fCore.Vector3;
             playerForward = fCore.Vector3.Z();
             playerForward.transform(avatarNode.mtxWorld, false);

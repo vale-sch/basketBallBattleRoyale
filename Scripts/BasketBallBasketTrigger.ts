@@ -3,7 +3,9 @@ namespace basketBallBattleRoyale {
 
     fCore.Project.registerScriptNamespace(basketBallBattleRoyale);
     export let alivePlayers: number = 0;
+    export let isInMenu: boolean;
     export class BasketBallBasketTrigger extends fCore.ComponentScript {
+
 
         private amountOfLifes: number = 10;
         private avatarsLifes: number;
@@ -14,7 +16,6 @@ namespace basketBallBattleRoyale {
 
         private nextLevelButton: HTMLButtonElement;
         private winText: HTMLHeadingElement;
-        private buttonWinText: HTMLHeadingElement;
         private winMenu: HTMLDivElement;
 
         private parentToRemove: fCore.Node;
@@ -78,8 +79,10 @@ namespace basketBallBattleRoyale {
                         if (this.avatarsLifes == 0) {
                             this.looseMenu.hidden = false;
                             this.retryButton.addEventListener("click", this.reloadPage);
+                            isInMenu = true;
                             cmpAudDeath.play(true);
                             cmpAudLoose.play(true);
+                            cmpAudBackground.play(false);
                             fCore.Loop.stop();
                         }
                         break;
@@ -110,13 +113,11 @@ namespace basketBallBattleRoyale {
                         break;
                 }
                 if (alivePlayers == 1) {
+                    isInMenu = true;
                     if (localStorage.getItem("harderVersion")) {
                         this.winText = document.querySelector("#winText");
                         this.winText.innerHTML = "you have won the game, congrats!";
-                        this.buttonWinText = document.querySelector("#text");
-                        //this.buttonWinText.innerHTML = "";
                         this.nextLevelButton.innerHTML = "restart to menu with standard values ";
-
                         this.nextLevelButton.addEventListener("click", this.reloadPage);
                     }
                     else

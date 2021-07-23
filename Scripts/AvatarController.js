@@ -19,8 +19,9 @@ var basketBallBattleRoyale;
     }
     let isPointerInGame;
     function onPointerDown(_event) {
-        if (!isPointerInGame)
-            basketBallBattleRoyale.canvas.requestPointerLock();
+        if (!basketBallBattleRoyale.isInMenu)
+            if (!isPointerInGame)
+                basketBallBattleRoyale.canvas.requestPointerLock();
     }
     function pointerLockChange(_event) {
         if (!document.pointerLockElement)
@@ -82,8 +83,10 @@ var basketBallBattleRoyale;
                 //sub functionality of isGrabbingObjects();
                 if (this.isGrabbed && this.actualChosenBall) {
                     this.highlightTargetedBasket();
-                    if (!this.actualChosenBall.getComponent(fCore.ComponentRigidbody))
+                    if (!this.actualChosenBall.getComponent(fCore.ComponentRigidbody)) {
+                        this.actualChosenBall = null;
                         return;
+                    }
                     this.actualChosenBall.getComponent(fCore.ComponentRigidbody).setVelocity(fCore.Vector3.ZERO());
                     this.actualChosenBall.mtxWorld.translate(this.childAvatarNode.mtxWorld.translation);
                     this.actualChosenBall.getComponent(fCore.ComponentRigidbody).setPosition(this.childAvatarNode.mtxWorld.translation);
@@ -93,7 +96,7 @@ var basketBallBattleRoyale;
                             if (!localStorage.getItem("harderVersion"))
                                 basketBallBattleRoyale.gameState.shootBar += fCore.Loop.timeFrameReal / 100;
                             else
-                                basketBallBattleRoyale.gameState.shootBar += fCore.Loop.timeFrameReal / 50;
+                                basketBallBattleRoyale.gameState.shootBar += fCore.Loop.timeFrameReal / 75;
                     if (rIsReleased) {
                         this.power = basketBallBattleRoyale.gameState.shootBar * 40;
                         basketBallBattleRoyale.gameState.shootBar = 0;
@@ -213,12 +216,16 @@ var basketBallBattleRoyale;
         }
         shootCalculation() {
             let targetOfMesh;
-            if (this.oldRayHit.rigidbodyComponent.getContainer().getParent())
-                targetOfMesh = this.oldRayHit.rigidbodyComponent.getContainer().getParent();
-            targetOfMesh.getComponent(fCore.ComponentMaterial).clrPrimary.a = 0.5;
-            targetOfMesh.getChildren().forEach(childMesh => {
-                childMesh.getComponent(fCore.ComponentMaterial).clrPrimary.a = 0.5;
-            });
+            if (this.oldRayHit)
+                if (this.oldRayHit.rigidbodyComponent.getContainer())
+                    if (this.oldRayHit.rigidbodyComponent.getContainer().getParent())
+                        targetOfMesh = this.oldRayHit.rigidbodyComponent.getContainer().getParent();
+            if (targetOfMesh.getComponent(fCore.ComponentMaterial)) {
+                targetOfMesh.getComponent(fCore.ComponentMaterial).clrPrimary.a = 0.5;
+                targetOfMesh.getChildren().forEach(childMesh => {
+                    childMesh.getComponent(fCore.ComponentMaterial).clrPrimary.a = 0.5;
+                });
+            }
             let playerForward;
             playerForward = fCore.Vector3.Z();
             playerForward.transform(basketBallBattleRoyale.avatarNode.mtxWorld, false);
