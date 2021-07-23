@@ -2,7 +2,6 @@ namespace basketBallBattleRoyale {
     import fCore = FudgeCore;
 
     export let bskBallRoot: fCore.Graph;
-
     export let basketBalls: fCore.Node[] = new Array(new fCore.Node(""));
     export let basketBallContainer: fCore.Node;
     export let basketBallGraphInstance: fCore.Graph;
@@ -11,11 +10,13 @@ namespace basketBallBattleRoyale {
 
         private isSpawning: boolean;
         private ballIterator: number;
+
         constructor() {
             this.start();
             console.log("basketball spawner is initialized!");
 
         }
+
         private async start(): Promise<void> {
 
             basketBallContainer = bskBallRoot.getChild(1);

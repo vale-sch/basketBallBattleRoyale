@@ -4,12 +4,15 @@ namespace basketBallBattleRoyale {
 
     export class CheckOfOutRangeBalls extends fCore.ComponentScript {
         private thisContainer: fCore.Node;
+
         constructor(_container: fCore.Node) {
             super();
             this.thisContainer = _container;
             this.thisContainer.getComponent(fCore.ComponentRigidbody).addEventListener(fCore.EVENT_PHYSICS.TRIGGER_ENTER, this.hndTrigger);
+            console.log("basketball  out of range is initialized!");
 
         }
+
         private hndTrigger = (_event: fCore.EventPhysics): void => {
             if (_event.cmpRigidbody.getContainer().name == "BasketBallPrefab") {
                 basketBalls.splice(basketBalls.indexOf(_event.cmpRigidbody.getContainer().getParent()), 1);

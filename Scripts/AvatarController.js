@@ -2,6 +2,7 @@
 var basketBallBattleRoyale;
 (function (basketBallBattleRoyale) {
     var fCore = FudgeCore;
+    fCore.Project.registerScriptNamespace(basketBallBattleRoyale);
     //Event Systems------------------------------------------------------------
     let rIsPressed;
     let rIsReleased;
@@ -55,7 +56,6 @@ var basketBallBattleRoyale;
         }
     }
     //Event Systems------------------------------------------------------------
-    fCore.Project.registerScriptNamespace(basketBallBattleRoyale);
     class AvatarController {
         constructor(_players) {
             this.forwardMovement = 0;
@@ -113,6 +113,7 @@ var basketBallBattleRoyale;
             document.addEventListener("keypress", handler_Key_Pressed);
             document.addEventListener("keyup", handler_Key_Released);
             window.addEventListener("mousemove", onMouseMove);
+            this.start();
         }
         async start() {
             this.createAvatar();

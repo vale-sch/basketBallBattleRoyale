@@ -11,6 +11,7 @@ namespace basketBallBattleRoyale {
         protected reduceMutator(_mutator: FudgeCore.Mutator): void {
         }
     }
+
     export let gameState: GameState = new GameState();
 
     export class Hud {

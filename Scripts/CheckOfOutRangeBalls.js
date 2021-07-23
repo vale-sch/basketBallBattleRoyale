@@ -15,6 +15,7 @@ var basketBallBattleRoyale;
             };
             this.thisContainer = _container;
             this.thisContainer.getComponent(fCore.ComponentRigidbody).addEventListener("TriggerEnteredCollision" /* TRIGGER_ENTER */, this.hndTrigger);
+            console.log("basketball  out of range is initialized!");
         }
     }
     basketBallBattleRoyale.CheckOfOutRangeBalls = CheckOfOutRangeBalls;

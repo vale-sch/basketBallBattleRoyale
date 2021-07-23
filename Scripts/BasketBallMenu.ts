@@ -1,11 +1,13 @@
 namespace basketBallBattleRoyale {
 
+    export let sliderAudio: HTMLInputElement;
+
     let menu: HTMLDivElement;
     let optionMenu: HTMLDivElement;
     let playButton: HTMLButtonElement;
     let optionButton: HTMLButtonElement;
     let goBackButton: HTMLButtonElement;
-    export let sliderAudio: HTMLInputElement;
+
     window.addEventListener("load", startMenu);
 
     function startMenu(): void {
@@ -20,11 +22,13 @@ namespace basketBallBattleRoyale {
         optionButton.addEventListener("click", getOptions);
         playButton.addEventListener("click", startGame);
     }
+
     function getOptions(): void {
         menu.hidden = true;
         optionMenu.hidden = false;
         goBackButton.addEventListener("click", startMenu);
     }
+
     export function startGame(): void {
         menu.hidden = true;
         init();

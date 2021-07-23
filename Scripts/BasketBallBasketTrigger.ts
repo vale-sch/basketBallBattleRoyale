@@ -1,11 +1,11 @@
 namespace basketBallBattleRoyale {
     import fCore = FudgeCore;
-
     fCore.Project.registerScriptNamespace(basketBallBattleRoyale);
+
     export let alivePlayers: number = 0;
     export let isInMenu: boolean;
-    export class BasketBallBasketTrigger extends fCore.ComponentScript {
 
+    export class BasketBallBasketTrigger extends fCore.ComponentScript {
 
         private amountOfLifes: number = 10;
         private avatarsLifes: number;
@@ -13,7 +13,6 @@ namespace basketBallBattleRoyale {
 
         private retryButton: HTMLButtonElement;
         private looseMenu: HTMLDivElement;
-
         private nextLevelButton: HTMLButtonElement;
         private winText: HTMLHeadingElement;
         private winMenu: HTMLDivElement;
@@ -55,6 +54,7 @@ namespace basketBallBattleRoyale {
                     break;
             }
             alivePlayers = players.length;
+            console.log("basketball trigger is initialized!");
         }
 
         private hndTrigger = (_event: fCore.EventPhysics): void => {
@@ -128,14 +128,31 @@ namespace basketBallBattleRoyale {
                 this.isRemoving = true;
             }
         }
+
+        private update = (): void => {
+            if (this.isRemoving) {
+                this.removingTime -= fCore.Loop.timeFrameReal / 1000;
+                if (this.removingTime <= 0 && this.rgdBdyToRemove.getContainer()) {
+                    basketBalls.splice(basketBalls.indexOf(this.parentToRemove.getChild(0)), 1);
+                    this.rgdBdyToRemove.getContainer().removeComponent(this.rgdBdyToRemove);
+                    basketBallContainer.getChild(1).removeChild(this.parentToRemove);
+                    this.isRemoving = false;
+                    this.rgdBdyToRemove = null;
+                    this.removingTime = 0.75;
+                }
+            }
+        }
+
         private reloadPage(): void {
             localStorage.clear();
             window.location.reload();
         }
+
         private async writeNewDifficulty(): Promise<void> {
             localStorage.setItem("harderVersion", "true");
             window.location.reload();
         }
+
         private getRidOfNodeAndRgdbdy = (): void => {
             alivePlayers--;
             this.thisContainer.getParent().getParent().getComponent(EnemiesController).isDead = true;
@@ -152,22 +169,8 @@ namespace basketBallBattleRoyale {
                         });
                     });
             });
-
             players.splice(basketBalls.indexOf(this.thisContainer.getParent().getParent()), 1);
             this.thisContainer.getParent().getParent().getParent().removeChild(this.thisContainer.getParent().getParent());
-        }
-        private update = (): void => {
-            if (this.isRemoving) {
-                this.removingTime -= fCore.Loop.timeFrameReal / 1000;
-                if (this.removingTime <= 0 && this.rgdBdyToRemove.getContainer()) {
-                    basketBalls.splice(basketBalls.indexOf(this.parentToRemove.getChild(0)), 1);
-                    this.rgdBdyToRemove.getContainer().removeComponent(this.rgdBdyToRemove);
-                    basketBallContainer.getChild(1).removeChild(this.parentToRemove);
-                    this.isRemoving = false;
-                    this.rgdBdyToRemove = null;
-                    this.removingTime = 0.75;
-                }
-            }
         }
     }
 }

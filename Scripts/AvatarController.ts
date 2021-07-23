@@ -1,8 +1,7 @@
 namespace basketBallBattleRoyale {
     import fCore = FudgeCore;
-
+    fCore.Project.registerScriptNamespace(basketBallBattleRoyale);
     //Event Systems------------------------------------------------------------
-
     let rIsPressed: boolean;
     let rIsReleased: boolean;
     function handler_Key_Pressed(_event: KeyboardEvent): void {
@@ -19,6 +18,7 @@ namespace basketBallBattleRoyale {
         }
 
     }
+
     let isPointerInGame: boolean;
     function onPointerDown(_event: MouseEvent): void {
         if (!isInMenu)
@@ -45,6 +45,7 @@ namespace basketBallBattleRoyale {
                 cmpCamera.mtxPivot.rotateX(_event.movementY / rotFriction);
         }
     }
+
     function checkIfMouseMoveIsStillValid(_movementY: number): boolean {
         let topRotLock: number = -10;
         let botRotLock: number = 15;
@@ -61,7 +62,6 @@ namespace basketBallBattleRoyale {
         }
     }
     //Event Systems------------------------------------------------------------
-    fCore.Project.registerScriptNamespace(basketBallBattleRoyale);
 
     export class AvatarController {
         private forwardMovement: number = 0;
@@ -70,16 +70,19 @@ namespace basketBallBattleRoyale {
         private frictionFactor: number = 8;
         private throwStrength: number = 450;
         private nearestDistance: number = 6;
+        private timer: number;
+        private power: number = 0;
+
         private actualChosenBall: fCore.Node;
-        private cmpAvatar: fCore.ComponentRigidbody;
         private childAvatarNode: fCore.Node;
         private players: fCore.Node[];
-        private oldRayHit: ƒ.RayHitInfo;
+        private cmpAvatar: fCore.ComponentRigidbody;
+        private oldRayHit: fCore.RayHitInfo;
         private isGrabbed: boolean;
-        private timer: number;
+
         private hasShot: boolean;
-        private power: number = 0;
         private progressBar: HTMLDivElement = document.querySelector("#shootBar");
+
         constructor(_players: fCore.Node[]) {
             this.players = _players;
             document.addEventListener("mousedown", onPointerDown);
@@ -87,7 +90,7 @@ namespace basketBallBattleRoyale {
             document.addEventListener("keypress", handler_Key_Pressed);
             document.addEventListener("keyup", handler_Key_Released);
             window.addEventListener("mousemove", onMouseMove);
-
+            this.start();
         }
 
         public async start(): Promise<void> {
@@ -102,35 +105,6 @@ namespace basketBallBattleRoyale {
                 this.movementspeed = playerSpeed - 1;
             fCore.Loop.addEventListener(fCore.EVENT.LOOP_FRAME, this.update);
             fCore.Loop.start(fCore.LOOP_MODE.TIME_REAL, 60);
-        }
-
-        private createAvatar(): void {
-            this.cmpAvatar = new fCore.ComponentRigidbody(
-                75,
-                fCore.PHYSICS_TYPE.DYNAMIC,
-                fCore.COLLIDER_TYPE.CYLINDER,
-                fCore.PHYSICS_GROUP.DEFAULT
-            );
-            this.cmpAvatar.restitution = 0.1;
-            this.cmpAvatar.rotationInfluenceFactor = fCore.Vector3.ZERO();
-            this.cmpAvatar.friction = 100;
-
-            avatarNode = new fCore.Node("AvatarNode");
-            avatarNode.addComponent(
-                new fCore.ComponentTransform(
-                    fCore.Matrix4x4.TRANSLATION(fCore.Vector3.Y(1))
-                )
-            );
-            this.childAvatarNode = new fCore.Node("childAvatarNode");
-            this.childAvatarNode.addComponent(new fCore.ComponentTransform());
-            this.childAvatarNode.mtxLocal.translate(new fCore.Vector3(0, 1, 4.75));
-
-            avatarNode.appendChild(this.childAvatarNode);
-            avatarNode.addComponent(cmpCamera);
-            avatarNode.addComponent(this.cmpAvatar);
-
-
-            this.players[0].appendChild(avatarNode);
         }
 
         private update = (): void => {
@@ -176,6 +150,34 @@ namespace basketBallBattleRoyale {
                     this.progressBar.hidden = true;
                 }
             }
+        }
+
+        private createAvatar(): void {
+            this.cmpAvatar = new fCore.ComponentRigidbody(
+                75,
+                fCore.PHYSICS_TYPE.DYNAMIC,
+                fCore.COLLIDER_TYPE.CYLINDER,
+                fCore.PHYSICS_GROUP.DEFAULT
+            );
+            this.cmpAvatar.restitution = 0.1;
+            this.cmpAvatar.rotationInfluenceFactor = fCore.Vector3.ZERO();
+            this.cmpAvatar.friction = 100;
+
+            avatarNode = new fCore.Node("AvatarNode");
+            avatarNode.addComponent(
+                new fCore.ComponentTransform(
+                    fCore.Matrix4x4.TRANSLATION(fCore.Vector3.Y(1))
+                )
+            );
+            this.childAvatarNode = new fCore.Node("childAvatarNode");
+            this.childAvatarNode.addComponent(new fCore.ComponentTransform());
+            this.childAvatarNode.mtxLocal.translate(new fCore.Vector3(0, 1, 4.75));
+
+            avatarNode.appendChild(this.childAvatarNode);
+            avatarNode.addComponent(cmpCamera);
+            avatarNode.addComponent(this.cmpAvatar);
+
+            this.players[0].appendChild(avatarNode);
         }
 
         private handleInputAvatar(_deltaTime: number): void {
@@ -261,7 +263,6 @@ namespace basketBallBattleRoyale {
         }
 
         private shootCalculation(): void {
-
             let targetOfMesh: fCore.Node;
             if (this.oldRayHit)
                 if (this.oldRayHit.rigidbodyComponent.getContainer())

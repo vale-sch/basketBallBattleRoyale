@@ -45,8 +45,8 @@ var basketBallBattleRoyale;
         //create static Colliders and dynamic rigidbodies
         createandHandleRigidbodies();
         //initialize avatar
-        let avatarController = new basketBallBattleRoyale.AvatarController(basketBallBattleRoyale.players);
-        avatarController.start();
+        // tslint:disable-next-line: no-unused-expression
+        new basketBallBattleRoyale.AvatarController(basketBallBattleRoyale.players);
         fCore.Physics.adjustTransforms(basketBallBattleRoyale.bskBallRoot, true);
         //deactivate pre build meshes from editor, only colliders were needed
         for (let collMeshBasket of collMeshesOfBasketStand) {
@@ -57,13 +57,29 @@ var basketBallBattleRoyale;
             collMeshTrigger.activate(false);
         for (let cmpMeshFloorTile of cmpMeshFloorTiles)
             cmpMeshFloorTile.activate(false);
+        //setup audio and connection to html elements
         setupAudio();
         basketBallBattleRoyale.Hud.start();
+        //start loop
         fCore.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
         fCore.Loop.start(fCore.LOOP_MODE.TIME_REAL, 60);
+        console.log("game has started succesfully - root graph underneath");
         console.log(basketBallBattleRoyale.bskBallRoot);
     }
     basketBallBattleRoyale.init = init;
+    async function update() {
+        ƒ.Physics.world.simulate(fCore.Loop.timeFrameReal / 1000);
+        //debug keyboard events
+        if (fCore.Keyboard.isPressedOne([fCore.KEYBOARD_CODE.T]))
+            fCore.Physics.settings.debugMode =
+                fCore.Physics.settings.debugMode ==
+                    fCore.PHYSICS_DEBUGMODE.JOINTS_AND_COLLIDER
+                    ? fCore.PHYSICS_DEBUGMODE.PHYSIC_OBJECTS_ONLY
+                    : fCore.PHYSICS_DEBUGMODE.JOINTS_AND_COLLIDER;
+        if (fCore.Keyboard.isPressedOne([fCore.KEYBOARD_CODE.Y]))
+            fCore.Physics.settings.debugDraw = !fCore.Physics.settings.debugDraw;
+        viewport.draw();
+    }
     function setupAudio() {
         let cmpListener = new fCore.ComponentAudioListener();
         basketBallBattleRoyale.cmpCamera.getContainer().addComponent(cmpListener);
@@ -83,19 +99,6 @@ var basketBallBattleRoyale;
         basketBallBattleRoyale.avatarNode.appendChild(audioNode);
         fCore.AudioManager.default.listenWith(cmpListener);
         fCore.AudioManager.default.listenTo(basketBallBattleRoyale.bskBallRoot);
-    }
-    async function update() {
-        ƒ.Physics.world.simulate(fCore.Loop.timeFrameReal / 1000);
-        //debug keyboard events
-        if (fCore.Keyboard.isPressedOne([fCore.KEYBOARD_CODE.T]))
-            fCore.Physics.settings.debugMode =
-                fCore.Physics.settings.debugMode ==
-                    fCore.PHYSICS_DEBUGMODE.JOINTS_AND_COLLIDER
-                    ? fCore.PHYSICS_DEBUGMODE.PHYSIC_OBJECTS_ONLY
-                    : fCore.PHYSICS_DEBUGMODE.JOINTS_AND_COLLIDER;
-        if (fCore.Keyboard.isPressedOne([fCore.KEYBOARD_CODE.Y]))
-            fCore.Physics.settings.debugDraw = !fCore.Physics.settings.debugDraw;
-        viewport.draw();
     }
     function createandHandleRigidbodies() {
         //floorTiles
@@ -141,6 +144,7 @@ var basketBallBattleRoyale;
                         collMeshesOfBasketTrigger[counterTrigger] = meshAndTrigger.getComponent(fCore.ComponentMesh);
                         let staticTrigger = new fCore.ComponentRigidbody(0, fCore.PHYSICS_TYPE.STATIC, fCore.COLLIDER_TYPE.CUBE, fCore.PHYSICS_GROUP.TRIGGER);
                         meshAndTrigger.addComponent(staticTrigger);
+                        // add basketballtrigger script component
                         meshAndTrigger.addComponent(new basketBallBattleRoyale.BasketBallBasketTrigger(meshAndTrigger));
                         counterTrigger++;
                     }

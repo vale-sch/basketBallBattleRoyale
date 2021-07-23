@@ -21,6 +21,7 @@ var basketBallBattleRoyale;
                         }
                 });
             };
+            //behaviaor functinality
             this.update = () => {
                 if (this.isDead) {
                     if (this.targetedBall && !this.hasCheckedEverything) {

@@ -3,27 +3,30 @@ namespace basketBallBattleRoyale {
     fCore.Project.registerScriptNamespace(basketBallBattleRoyale);
     export class EnemiesController extends fCore.ComponentScript {
         public isDead: boolean = false;
-        private myBsktTrigger: fCore.ComponentMesh;
 
+
+        private myBsktTrigger: fCore.ComponentMesh;
+        private containerTriggers: fCore.ComponentMesh[];
+        private rgdBdyEnemy: fCore.ComponentRigidbody;
+        private rndChosenTarget: fCore.ComponentMesh;
+        private actualChosenBall: fCore.Node;
+        private targetedBall: fCore.Node;
         private containerEnemy: fCore.Node;
         private enemyContainer: fCore.Node;
         private childEnemyNode: fCore.Node;
-        private throwStrength: number = 10;
-        private containerTriggers: fCore.ComponentMesh[];
-        private rgdBdyEnemy: fCore.ComponentRigidbody;
 
-        private actualChosenBall: fCore.Node;
-        private targetedBall: fCore.Node;
+        private throwStrength: number = 10;
+        private allDistances: number[];
         private idleTime: number = 1.5;
         private speedThreshold: number = 12;
-        private rndChosenTarget: fCore.ComponentMesh;
+        private randomPointVec: fCore.Vector3;
+
         private hasGrabbed: boolean = false;
         private isInGrabbingRange: boolean = false;
         private distanceBallMag: number;
         private hasShot: boolean = false;
-        private allDistances: number[];
-        private randomPointVec: fCore.Vector3;
         private hasCheckedEverything: boolean;
+
         constructor(_containerEnemy?: fCore.Node, _rgdBdyEnemy?: fCore.ComponentRigidbody, _containerTriggers?: fCore.ComponentMesh[]) {
             super();
             this.containerEnemy = _containerEnemy;
@@ -51,7 +54,7 @@ namespace basketBallBattleRoyale {
             });
 
         }
-
+        //behaviaor functinality
         private update = (): void => {
             if (this.isDead) {
                 if (this.targetedBall && !this.hasCheckedEverything) {
@@ -91,7 +94,6 @@ namespace basketBallBattleRoyale {
                 this.moveToAvailableBalls();
             } else
                 this.checkNearestBall();
-
         }
 
         private checkNearestBall = (): void => {
@@ -103,7 +105,6 @@ namespace basketBallBattleRoyale {
                     if (!this.targetedBall && !basketBall.getComponent(BasketBallsController).isInPlayersUse && !basketBall.getComponent(BasketBallsController).isInPlayersUse)
                         howMuchActiveBalls++;
             });
-
             if (howMuchActiveBalls == 0) return;
             this.allDistances = null;
             this.allDistances = Array<number>(howMuchActiveBalls);
@@ -136,7 +137,6 @@ namespace basketBallBattleRoyale {
             });
         }
 
-
         private moveToRandomPoint = (): void => {
             this.rgdBdyEnemy.setRotation(new fCore.Vector3(0, (this.enemyContainer.mtxWorld.translation.x - this.randomPointVec.x) - (this.enemyContainer.mtxWorld.translation.z - this.randomPointVec.z) * 10, 0));
             let distanceToRandom: number = fCore.Vector3.DIFFERENCE(new fCore.Vector3((this.randomPointVec.x - this.enemyContainer.mtxWorld.translation.x), 0, (this.randomPointVec.z - this.enemyContainer.mtxWorld.translation.z)), this.enemyContainer.mtxWorld.translation).magnitude;
@@ -146,7 +146,6 @@ namespace basketBallBattleRoyale {
             }
             else
                 this.rgdBdyEnemy.addVelocity(fCore.Vector3.ZERO());
-
         }
 
         private moveToAvailableBalls = (): void => {
@@ -165,6 +164,7 @@ namespace basketBallBattleRoyale {
                 }
             }
         }
+
         private calculationAndShot = (): void => {
             this.actualChosenBall.getComponent(fCore.ComponentRigidbody).setVelocity(fCore.Vector3.ZERO());
             this.actualChosenBall.getComponent(fCore.ComponentRigidbody).setRotation(fCore.Vector3.ZERO());
@@ -206,6 +206,7 @@ namespace basketBallBattleRoyale {
                 this.hasShot = true;
             }
         }
+
         private resetReferences = (): void => {
             this.actualChosenBall = null;
             this.targetedBall = null;

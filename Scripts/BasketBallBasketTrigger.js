@@ -80,6 +80,19 @@ var basketBallBattleRoyale;
                     this.isRemoving = true;
                 }
             };
+            this.update = () => {
+                if (this.isRemoving) {
+                    this.removingTime -= fCore.Loop.timeFrameReal / 1000;
+                    if (this.removingTime <= 0 && this.rgdBdyToRemove.getContainer()) {
+                        basketBallBattleRoyale.basketBalls.splice(basketBallBattleRoyale.basketBalls.indexOf(this.parentToRemove.getChild(0)), 1);
+                        this.rgdBdyToRemove.getContainer().removeComponent(this.rgdBdyToRemove);
+                        basketBallBattleRoyale.basketBallContainer.getChild(1).removeChild(this.parentToRemove);
+                        this.isRemoving = false;
+                        this.rgdBdyToRemove = null;
+                        this.removingTime = 0.75;
+                    }
+                }
+            };
             this.getRidOfNodeAndRgdbdy = () => {
                 basketBallBattleRoyale.alivePlayers--;
                 this.thisContainer.getParent().getParent().getComponent(basketBallBattleRoyale.EnemiesController).isDead = true;
@@ -98,19 +111,6 @@ var basketBallBattleRoyale;
                 });
                 basketBallBattleRoyale.players.splice(basketBallBattleRoyale.basketBalls.indexOf(this.thisContainer.getParent().getParent()), 1);
                 this.thisContainer.getParent().getParent().getParent().removeChild(this.thisContainer.getParent().getParent());
-            };
-            this.update = () => {
-                if (this.isRemoving) {
-                    this.removingTime -= fCore.Loop.timeFrameReal / 1000;
-                    if (this.removingTime <= 0 && this.rgdBdyToRemove.getContainer()) {
-                        basketBallBattleRoyale.basketBalls.splice(basketBallBattleRoyale.basketBalls.indexOf(this.parentToRemove.getChild(0)), 1);
-                        this.rgdBdyToRemove.getContainer().removeComponent(this.rgdBdyToRemove);
-                        basketBallBattleRoyale.basketBallContainer.getChild(1).removeChild(this.parentToRemove);
-                        this.isRemoving = false;
-                        this.rgdBdyToRemove = null;
-                        this.removingTime = 0.75;
-                    }
-                }
             };
             this.thisContainer = _container;
             this.looseMenu = document.querySelector("#loose");
@@ -139,6 +139,7 @@ var basketBallBattleRoyale;
                     break;
             }
             basketBallBattleRoyale.alivePlayers = basketBallBattleRoyale.players.length;
+            console.log("basketball trigger is initialized!");
         }
         reloadPage() {
             localStorage.clear();
