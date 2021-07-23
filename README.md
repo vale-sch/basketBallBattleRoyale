@@ -3,7 +3,7 @@ Repository for the module "Prototyping interactive media-applications and games"
 # Prima
 - [Zum Spiel](https://vale-sch.github.io/basketBallBattleRoyale/BasketBall_BattleRoyale.html)
 - [Zum Designdokument](Link1.1)
-- [Zu den Skripen](Link1.1)
+- [Zu den Skripen](https://github.com/vale-sch/basketBallBattleRoyale/tree/main/Scripts)
 - [Gepacktes Archiv](Link1)
 ## Checkliste für Leistungsnachweis
 
