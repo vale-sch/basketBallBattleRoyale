@@ -26,6 +26,7 @@ var basketBallBattleRoyale;
     }
     function startGame() {
         menu.hidden = true;
+        playButton.innerHTML = "is loading...";
         basketBallBattleRoyale.init();
     }
     basketBallBattleRoyale.startGame = startGame;

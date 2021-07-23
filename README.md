@@ -1,10 +1,10 @@
 # © Valentin Schmidberger, HFU
 Repository for the module "Prototyping interactive media-applications and games" at Furtwangen University
-# Prima
+# Links/Abgabe
 - [Zum Spiel](https://vale-sch.github.io/basketBallBattleRoyale/BasketBall_BattleRoyale.html)
 - [Zum Designdokument](Link1.1)
 - [Zu den Skripen](https://github.com/vale-sch/basketBallBattleRoyale/tree/main/Scripts)
-- [Gepacktes Archiv](Link1)
+- [Gepacktes Archiv](https://github.com/vale-sch/basketBallBattleRoyale/blob/main/basketBallBattleRoyale.zip)
 
 # how to play it locally
 1. download zip or clone repository via HTTPS/SSH

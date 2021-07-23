@@ -31,6 +31,7 @@ namespace basketBallBattleRoyale {
 
     export function startGame(): void {
         menu.hidden = true;
+        playButton.innerHTML = "is loading...";
         init();
     }
 }
