@@ -9,7 +9,9 @@ Repository for the module "Prototyping interactive media-applications and games"
 # how to play it locally
 download zip or clone repository via HTTPS/SSH
 run console command: "npm update"
-open repository via vs code and run live server
+open repository via vs code
+go to the html file and comment in the out commented 
+run live server via vs code
 follow the instructions in game
 
 ## Checkliste für Leistungsnachweis
