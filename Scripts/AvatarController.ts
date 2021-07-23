@@ -66,7 +66,7 @@ namespace basketBallBattleRoyale {
     export class AvatarController {
         private forwardMovement: number = 0;
         private backwardMovement: number = 0;
-        private movementspeed: number;
+        private movementspeed: number = 5;
         private frictionFactor: number = 8;
         private throwStrength: number = 450;
         private nearestDistance: number = 6;
@@ -96,13 +96,9 @@ namespace basketBallBattleRoyale {
         public async start(): Promise<void> {
             this.createAvatar();
             console.log("avatar is initialized!");
-            let response: Response = await fetch("./JSON/Config.json");
-            let textResponse: string = await response.text();
-            let asd: string[] = textResponse.split(":");
-            let playerSpeed: number = parseInt(asd[1]);
-            this.movementspeed = playerSpeed;
+
             if (localStorage.getItem("harderVersion"))
-                this.movementspeed = playerSpeed - 1;
+                this.movementspeed = this.movementspeed - 1;
             fCore.Loop.addEventListener(fCore.EVENT.LOOP_FRAME, this.update);
             fCore.Loop.start(fCore.LOOP_MODE.TIME_REAL, 60);
         }

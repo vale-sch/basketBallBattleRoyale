@@ -60,6 +60,7 @@ var basketBallBattleRoyale;
         constructor(_players) {
             this.forwardMovement = 0;
             this.backwardMovement = 0;
+            this.movementspeed = 5;
             this.frictionFactor = 8;
             this.throwStrength = 450;
             this.nearestDistance = 6;
@@ -118,13 +119,8 @@ var basketBallBattleRoyale;
         async start() {
             this.createAvatar();
             console.log("avatar is initialized!");
-            let response = await fetch("./JSON/Config.json");
-            let textResponse = await response.text();
-            let asd = textResponse.split(":");
-            let playerSpeed = parseInt(asd[1]);
-            this.movementspeed = playerSpeed;
             if (localStorage.getItem("harderVersion"))
-                this.movementspeed = playerSpeed - 1;
+                this.movementspeed = this.movementspeed - 1;
             fCore.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update);
             fCore.Loop.start(fCore.LOOP_MODE.TIME_REAL, 60);
         }
