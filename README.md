@@ -5,6 +5,13 @@ Repository for the module "Prototyping interactive media-applications and games"
 - [Zum Designdokument](Link1.1)
 - [Zu den Skripen](https://github.com/vale-sch/basketBallBattleRoyale/tree/main/Scripts)
 - [Gepacktes Archiv](Link1)
+
+# how to play it locally
+download zip or clone repository via HTTPS/SSH
+run console command: "npm update"
+open repository via vs code and run live server
+follow the instructions in game
+
 ## Checkliste für Leistungsnachweis
 
 | Nr | Bezeichnung           | Inhalt                                                                                                                                                                                                                                                                         |
